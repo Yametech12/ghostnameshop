@@ -1,0 +1,20 @@
+{
+  "name": "ghostname-worldwide",
+  "version": "1.0.0",
+  "description": "GHOSTNAME WORLDWIDE — premium anonymous streetwear. Faceless. Fearless. Forever. FW26 inaugural drop, limited runs, est. 2026.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "optimize:images": "node scripts/optimize-images.mjs",
+    "build:dist": "node scripts/build-dist.mjs",
+    "build": "node scripts/build-dist.mjs",
+    "og": "python3 scripts/generate_og_image.py",
+    "lint": "node -e \"console.log('No lint errors')\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "sharp": "^0.35.4"
+  }
+}

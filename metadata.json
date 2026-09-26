@@ -1,0 +1,8 @@
+{
+  "name": "GHOSTNAME WORLDWIDE — Premium Streetwear",
+  "description": "GHOSTNAME WORLDWIDE — premium anonymous streetwear. Faceless. Fearless. Forever. FW26 inaugural drop, limited runs, est. 2026.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
