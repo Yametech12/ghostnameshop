@@ -1838,11 +1838,12 @@ document.getElementById("eggCity").textContent = CITIES[Math.floor(Math.random()
 (async function boot() {
     /* Catalog comes from products.json — add inventory there, not here. */
     try {
-        const res = await fetch("products.json");
-        ALL = await res.json();
+        /* Live catalog first (admin edits apply instantly), static fallback second. */
+        const res = await fetch("/api/products").catch(() => null);
+        ALL = res && res.ok ? await res.json() : await (await fetch("products.json")).json();
     } catch (err) {
-        console.error("products.json failed to load", err);
-        toast("Catalog failed to load — check products.json");
+        console.error("catalog failed to load", err);
+        toast("Catalog failed to load");
         return;
     }
     products = ALL.filter(p => p.id.charAt(0) === "p");

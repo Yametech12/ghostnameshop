@@ -46,6 +46,7 @@ Set in **Settings → Environment** (sandbox) and in deploy env vars (production
 | `PRINTIFY_API_TOKEN` / `PRINTIFY_SHOP_ID` | Printify API access |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Order ledger (free tier OK) |
 | `NEXT_PUBLIC_APP_URL` | Public base URL for PayPal return/cancel |
+| `ADMIN_DASHBOARD_KEY` | Password for `/admin` (min 8 chars) |
 
 ## Setup steps
 
@@ -59,6 +60,14 @@ Set in **Settings → Environment** (sandbox) and in deploy env vars (production
    land in the ledger as `manual_review` instead of failing.
 4. **Prices**: edit `public/products.json` (`price.usd`). Keep retail above
    Printify cost + shipping + PayPal fees (~3.49% + $0.49).
+
+## Admin dashboard (`/admin`)
+
+Password-protected (shared key in `ADMIN_DASHBOARD_KEY`) dashboard for the store owner:
+
+- **Analytics** — paid revenue, order counts, 14-day revenue chart, top products, status breakdown
+- **Orders** — every ledger record: status (`created → paid → fulfilling → fulfilled | manual_review`), items, totals, PayPal/Printify ids
+- **Products** — edit name, price, category, fabric, tag, and sold-out flag live. Edits are stored in Redis (`gn:admin:product_overrides`) and applied instantly to the storefront via `/api/products` (the static storefront fetches this first, falling back to `products.json`) **and** to the server-side checkout re-pricing, so the displayed price is always the charged price.
 
 ## Fail-safe guarantee
 
