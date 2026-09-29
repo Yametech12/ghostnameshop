@@ -47,12 +47,14 @@ export const PRINTIFY: Record<string, PrintifyMapping> = {
     ],
   },
   p2: {
-    productId: "PRINTIFY_PRODUCT_ID_FOR_VOID_TEE",
+    productId: "6aba1e38855344491704d840", // Alien Mask Graphic Tee (White) — blueprint 5345, provider 99
+    blueprintId: 5345,
+    printProviderId: 99,
     variants: [
-      { size: "S", color: COLOR, variantId: 0, cost: 0 },
-      { size: "M", color: COLOR, variantId: 0, cost: 0 },
-      { size: "L", color: COLOR, variantId: 0, cost: 0 },
-      { size: "XL", color: COLOR, variantId: 0, cost: 0 },
+      { size: "S", color: "White", variantId: 0, cost: 0 }, // enable + map when added in Printify
+      { size: "M", color: "White", variantId: 243987, cost: 20.51 },
+      { size: "L", color: "White", variantId: 0, cost: 0 },
+      { size: "XL", color: "White", variantId: 0, cost: 0 },
     ],
   },
   p3: {
