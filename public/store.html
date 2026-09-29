@@ -38,6 +38,40 @@
 <!-- ===== Performance: preload the hero art before CSS discovers it ===== -->
 <link rel="preload" as="image" type="image/webp" fetchpriority="high" href="assets/images/hero_streetwear_fw26_1790379228007.webp">
 
+<!-- ===== CHECKOUT CONFIG — the ONLY place to edit checkout settings ===== -->
+<script>
+/* Snipcart PUBLIC test key: app.snipcart.com → Account → Credentials.
+   NEVER put the secret key in this file. Checkout stays disabled (and the
+   existing /checkout PayPal flow keeps working) while this is a placeholder. */
+var SNIPCART_PUBLIC_KEY = "SET_YOUR_SNIPCART_PUBLIC_KEY";
+/* URL Snipcart fetches to validate prices/ids. This deployment serves the
+   catalog (same shape as products.json) at /api/products with id + price object.
+   On a static host without the API, change this to "/products.json" and make
+   sure the JSON "url" fields match. */
+var SNIPCART_VALIDATION_URL = "/api/products";
+var SNIPCART_CONFIGURED = !!SNIPCART_PUBLIC_KEY && SNIPCART_PUBLIC_KEY.indexOf("SET_YOUR") !== 0;
+/* Newsletter form action (Mailchimp-style). Empty = forms fail closed with a
+   clear message instead of POSTing to a fake endpoint. */
+var NEWSLETTER_ACTION = "";
+/* Load Snipcart only when configured — on-user-interaction keeps the page fast. */
+(function () {
+    if (!SNIPCART_CONFIGURED) return;
+    window.SnipcartSettings = {
+        publicApiKey: SNIPCART_PUBLIC_KEY,
+        loadStrategy: "on-user-interaction",
+        currency: "usd"
+    };
+    var s = document.createElement("script");
+    s.src = "https://cdn.snipcart.com/themes/v3.4.0/default/snipcart.js";
+    s.async = true;
+    document.head.appendChild(s);
+    var l = document.createElement("link");
+    l.rel = "stylesheet";
+    l.href = "https://cdn.snipcart.com/themes/v3.4.0/default/snipcart.css";
+    document.head.appendChild(l);
+})();
+</script>
+
 <!-- ===== Typography: Plus Jakarta Sans (body) + Space Grotesk (headings) — non-blocking ===== -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -718,6 +752,11 @@
     }
     .cookie-actions button.ghost { background: transparent; border: 1px solid var(--line); color: #fff; }
 
+    /* ===== Snipcart mode: payable cart is Snipcart's — hide the local mirror UI ===== */
+    body.snipcart-on .cart-drawer,
+    body.snipcart-on #checkoutModal,
+    body.snipcart-on #overlay { display: none !important; }
+
     /* ===== Toast (replaces alert()) ===== */
     .toast {
         position: fixed; bottom: 28px; left: 50%; transform: translate(-50%, 20px);
@@ -796,8 +835,11 @@
     </ul>
     <div class="nav-tools">
         <button class="icon-btn search-label" onclick="openSearch()" aria-label="Search products">Search</button>
-        <select class="currency-select" id="currencySelect" onchange="setCurrency(this.value)" aria-label="Currency" title="All prices and charges in USD">
+        <select class="currency-select" id="currencySelect" onchange="setCurrency(this.value)" aria-label="Currency" title="Prices shown and charged in the selected currency">
             <option value="USD">USD $</option>
+            <option value="EUR">EUR €</option>
+            <option value="GBP">GBP £</option>
+            <option value="JPY">JPY ¥</option>
         </select>
         <span class="cart-icon" id="wlCount" aria-live="polite" title="Wishlist">♥ 0</span>
         <span class="cart-icon" onclick="toggleCart()" role="button" tabindex="0" onkeydown="if(event.key==='Enter')toggleCart()" aria-label="Open cart">CART (<span id="cartCount">0</span>)</span>
@@ -1062,7 +1104,8 @@
     <div class="cart-total">
         <span>TOTAL</span><span id="cartTotal">$0</span>
     </div>
-    <button class="checkout-btn" onclick="checkout()">Checkout</button>
+    <button class="checkout-btn" id="cartCheckoutBtn" onclick="checkout()">Checkout</button>
+    <p class="cart-note" id="cartSnipcartNote" style="margin-top:10px; display:none;">Checkout is not configured yet — set the Snipcart public key (see CONFIG.md). The separate PayPal flow at /checkout is live.</p>
     <p class="cart-note" id="cartCurrencyNote">Prices shown in USD — charged in USD</p>
 </aside>
 
@@ -1087,7 +1130,7 @@
                 <span id="pdQtyVal" aria-live="polite">1</span>
                 <button onclick="pdQty(1)" aria-label="Increase quantity">+</button>
             </div>
-            <button class="pd-add" id="pdAdd" onclick="pdAddToCart()">Add to Cart</button>
+            <div class="pd-add" id="pdAdd" onclick="pdAddToCart()">Add to Cart</div>
             <div class="pd-label">Related</div>
             <div class="related-strip" id="relatedStrip"></div>
         </div>
@@ -1143,7 +1186,7 @@
             <div class="checkout-row total"><span>Total — charged in <span id="coCurrency">USD</span></span><span id="coTotal">$0</span></div>
         </div>
         <p style="color:var(--muted); font-size:0.78rem; margin-top:16px; line-height:1.6;">You'll pay securely with PayPal — balance, or debit &amp; credit card. Card data never touches our servers.</p>
-        <button type="button" class="checkout-submit-btn" onclick="checkoutHandoff(event)">Continue to Secure Checkout →</button>
+        <button type="button" class="checkout-submit-btn" onclick="checkoutHandoff(event)">Continue to Secure PayPal Checkout →</button>
     </div>
     <div id="checkoutSuccessView" class="checkout-success-view" style="display: none;">
         <div class="checkout-check-badge">✓</div>
@@ -1280,6 +1323,38 @@
 
 <script>
 /* ============================================================
+   SNIPCART — payable cart. Buttons are generated from the catalog so the
+   data-item-price object can never drift from products.json / /api/products.
+   data-item-url must match each product's "url" in the validation JSON.
+   Origin is taken from the running page, so the same code works on the
+   preview URL and on the production domain — just allow that host in the
+   Snipcart dashboard (see CONFIG.md).
+   ============================================================ */
+const VALIDATION_PATH = "/api/products"; // id + price-object JSON served by this site
+
+/** HTML-escaped price object exactly as Snipcart expects in data-item-price. */
+function priceAttr(p) {
+    const obj = (typeof p.price === "object" && p.price !== null) ? p.price : { usd: p.price };
+    return JSON.stringify(obj).replace(/"/g, "&quot;");
+}
+
+/** All Snipcart attributes for a sellable product. */
+function snipcartAttrs(p) {
+    const rel = p.webp || p.img || "";
+    const img = /^https?:\/\//.test(rel) ? rel : window.location.origin + "/" + rel.replace(/^\//, "");
+    const desc = (p.fabric || "GHOSTNAME streetwear") + (p.tag ? " · " + p.tag : "");
+    return ` data-item-id="${p.id}"`
+        + ` data-item-name="${p.name.replace(/"/g, "&quot;")}"`
+        + ` data-item-price="${priceAttr(p)}"`
+        + ` data-item-url="${p.url || VALIDATION_PATH}"`
+        + ` data-item-description="${desc.replace(/"/g, "&quot;")}"`
+        + ` data-item-image="${img}"`
+        + ` data-item-custom1-name="Size"`
+        + ` data-item-custom1-options="S|M|L|XL"`
+        + ` data-item-custom1-required="true"`;
+}
+
+/* ============================================================
    DATA LAYER — single source of truth.
    All prices are stored in USD; fmt() converts for display.
    Cart / wishlist / currency / recently-viewed persist in localStorage.
@@ -1294,35 +1369,35 @@ let archive = [];
 
 /* Currency: prices display in USD only. The charge currency is always USD —
    totals are recomputed server-side from products.json before payment. */
-const RATES  = { USD: 1, EUR: 0.92, GBP: 0.79, JPY: 157 };
-const dpFor  = c => (c === "JPY" ? 0 : 2);
+/* Currency: catalog stores FIXED price points per currency (no FX rates).
+   The card price equals the price Snipcart charges — Snipcart validates the
+   same price object through the JSON crawler. Missing key falls back to USD. */
+const VALID_CURRENCIES = { USD: 1, EUR: 1, GBP: 1, JPY: 1 };
+const dpFor = c => (c === "JPY" ? 0 : 2);
 let currency = localStorage.getItem("gn_currency") || "USD";
+if (!VALID_CURRENCIES[currency]) currency = "USD";
 let cart     = JSON.parse(localStorage.getItem("gn_cart") || "[]");
 let wishlist = new Set(JSON.parse(localStorage.getItem("gn_wishlist") || "[]"));
 let recent   = JSON.parse(localStorage.getItem("gn_recent") || "[]");
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function fmt(usd) {
-    const v = usd * RATES[currency];
+/* Value in the ACTIVE currency from the fixed price object. */
+function unitPrice(p) {
+    if (p && typeof p.price === "object" && p.price !== null) {
+        const v = p.price[currency.toLowerCase()];
+        return typeof v === "number" ? v : p.price.usd;
+    }
+    return p.price;
+}
+
+/* fmt(p) formats a product's price in the active currency. Pass the product;
+   numeric callers (cart lines) store values in the active currency already. */
+function fmt(v) {
+    const amount = (typeof v === "object" && v !== null) ? unitPrice(v) : v;
     return new Intl.NumberFormat("en-US", {
         style: "currency", currency,
         minimumFractionDigits: dpFor(currency), maximumFractionDigits: dpFor(currency)
-    }).format(v);
-}
-/* price in the active display/charge currency */
-function unitPrice(p) {
-    return (p && typeof p.price === "object" && p.price !== null)
-        ? p.price[currency.toLowerCase()]
-        : p.price;
-}
-
-function fmt(usd) {
-    const v = usd * RATES[currency];
-    const dp = currency === "JPY" ? 0 : 2;
-    return new Intl.NumberFormat("en-US", {
-        style: "currency", currency,
-        minimumFractionDigits: dp, maximumFractionDigits: dp
-    }).format(v);
+    }).format(amount);
 }
 
 /* Subtle ghost SVG used as placeholder art if needed */
@@ -1356,7 +1431,9 @@ function renderGrid(list, target) {
                 <button class="heart-btn ${wishlist.has(p.id) ? 'active' : ''}" aria-label="Toggle wishlist for ${p.name}"
                         onclick="toggleWish('${p.id}', event)">♥</button>
                 ${p.tag !== 'SOLD OUT'
-                    ? `<div class="add-btn" onclick="addToCart('${p.id}',1,event)">Add to Cart — ${fmt(unitPrice(p))}</div>`
+                    ? `<button type="button" class="add-btn${SNIPCART_CONFIGURED ? ' snipcart-add-item' : ''}"${
+                        SNIPCART_CONFIGURED ? snipcartAttrs(p) : ` onclick="addToCart('${p.id}',1,event)"`
+                    }>Add to Cart — ${fmt(p)}</button>`
                     : `<div class="add-btn" style="background:#18181b;color:#71717a;cursor:not-allowed;">Sold Out</div>`}
             </div>
             <div class="card-info">
@@ -1518,6 +1595,22 @@ function openProduct(id) {
         "Made to order in " + (pd.fabric || "premium heavyweight fabric") + ". Boxy fit with dropped shoulders. Produced on demand by our fulfillment partner, shipped worldwide.";
     document.getElementById("pdAdd").disabled = pd.tag === "SOLD OUT";
     document.getElementById("pdAdd").textContent = pd.tag === "SOLD OUT" ? "Sold Out" : "Add to Cart";
+    /* Snipcart mode: attrs are re-stamped here on every open (openProduct boot
+       wrapper only handles the first paint). Sold-out keeps the button dead. */
+    if (SNIPCART_CONFIGURED) {
+        const el = document.getElementById("pdAdd");
+        if (el) {
+            const attrs = snipcartAttrs(pd);
+            attrs.trim().split(/\s+(?=data-item-)/).forEach(pair => {
+                const eq = pair.indexOf("=");
+                const name = pair.slice(0, eq);
+                const val = pair.slice(eq + 1).replace(/^"|"$/g, "");
+                el.setAttribute(name, val);
+            });
+            el.style.pointerEvents = pd.tag === "SOLD OUT" ? "none" : "";
+            el.style.opacity = pd.tag === "SOLD OUT" ? "0.6" : "";
+        }
+    }
 
     /* gallery: main stage + thumbnails */
     const thumbs = document.getElementById("pdThumbs");
@@ -1673,7 +1766,11 @@ function renderSearch(q) {
    CURRENCY — re-price grids, cart, modal, search, recents live
    ============================================================ */
 function setCurrency(c) {
-    if (c !== "USD") c = "USD";   /* USD-only storefront */
+    if (!VALID_CURRENCIES[c]) c = "USD";
+    /* Snipcart resets its cart on setCurrency — always switch BEFORE adding items. */
+    if (typeof window.Snipcart !== "undefined" && window.Snipcart.api && window.Snipcart.api.session) {
+        try { window.Snipcart.api.session.setCurrency(c.toLowerCase()); } catch (e) { /* not ready yet */ }
+    }
     currency = c;
     localStorage.setItem("gn_currency", c);
     const sel = document.getElementById("currencySelect");
@@ -1683,7 +1780,7 @@ function setCurrency(c) {
     renderRecent(); updateCart(); updateWishCount(); observeCards();
     updateCurrencyNotes();
     if (pd && document.getElementById("pdModal").classList.contains("open")) {
-        document.getElementById("pdPrice").textContent = fmt(unitPrice(pd));
+        document.getElementById("pdPrice").textContent = fmt(pd);
         openProductRelatedRefresh();
     }
     toast("Prices now shown and charged in " + currency);
@@ -1852,16 +1949,75 @@ document.getElementById("eggCity").textContent = CITIES[Math.floor(Math.random()
     /* Newsletter → ESP embedded-form endpoint (no backend needed).
        Swap in your audience's u/id values from the Mailchimp signup form,
        or the equivalent endpoint for Buttondown / ConvertKit. */
-    const NEWSLETTER_ACTION = "https://ghostnameworldwide.us1.list-manage.com/subscribe/post?u=REPLACE_WITH_LIST_U_ID&id=REPLACE_WITH_LIST_ID";
-    document.querySelectorAll("form.news-form, form.footer-news-input-wrap").forEach(f => {
-        f.action = NEWSLETTER_ACTION;
-        f.target = "_blank";
-        f.rel = "noopener";
-        f.addEventListener("submit", () => toast("You're on the list. Check your inbox to confirm."));
-    });
+    /* Newsletter: one constant. Fail closed with a clear message when unset. */
+    if (!window.NEWSLETTER_ACTION) {
+        document.querySelectorAll("form.news-form, form.footer-news-input-wrap").forEach(f => {
+            f.addEventListener("submit", (e) => {
+                e.preventDefault();
+                toast("Newsletter is not configured yet — set NEWSLETTER_ACTION.");
+            });
+        });
+    }
 
     /* Restore analytics consent before anything else runs. */
     if (localStorage.getItem("gn_cookies") === "accepted") initAnalytics();
+
+    /* ---- Snipcart mode wiring ----
+       With a real public key: clear the local cart mirror, mark the body so the
+       local drawer/checkout modal hide, convert the cart icon to Snipcart's
+       count, and let Snipcart's .snipcart-checkout button handle payment.
+       Without a key: keep the existing local-cart → /checkout PayPal flow and
+       show the "not configured" note in the drawer. */
+    const drawerTotal = document.querySelector(".cart-drawer .cart-total");
+    const drawerItems = document.getElementById("cartItems");
+    if (SNIPCART_CONFIGURED) {
+        cart = []; saveCart();
+        document.body.classList.add("snipcart-on");
+        document.querySelectorAll(".snipcart-add-item").forEach(b => { b.classList.add("is-ready"); });
+        const hidden = document.createComment("local cart mirror hidden (snipcart-on)");
+        if (drawerItems) drawerItems.innerHTML = "";
+        if (drawerTotal) drawerTotal.style.display = "none";
+        const btn = document.getElementById("cartCheckoutBtn");
+        if (btn) {
+            btn.classList.add("snipcart-checkout");
+            btn.removeAttribute("onclick");
+            btn.textContent = "Checkout";
+        }
+        const cartIcon = document.querySelector(".cart-icon[onclick*='toggleCart']");
+        if (cartIcon) {
+            cartIcon.removeAttribute("onclick");
+            cartIcon.removeAttribute("onkeydown");
+            cartIcon.removeAttribute("role");
+            cartIcon.removeAttribute("tabindex");
+            cartIcon.style.cursor = "pointer";
+            cartIcon.innerHTML = '<span class="snipcart-items-count">0</span>';
+        }
+        /* Product modal add button → Snipcart button (attrs set per openProduct).
+           Keep the id — openProduct() still references it for text/disabled state. */
+        const modalAdd = document.getElementById("pdAdd");
+        if (modalAdd) {
+            modalAdd.classList.add("snipcart-add-item");
+            modalAdd.removeAttribute("onclick");
+        }
+        const openProductOrig = openProduct;
+        openProduct = function (id) {
+            openProductOrig(id);
+            const el = document.querySelector(".pd-add.snipcart-add-item");
+            if (el && pd) {
+                const attrs = snipcartAttrs(pd);
+                const div = document.createElement("div");
+                div.innerHTML = `<div ${attrs}></div>`;
+                const src = div.firstChild;
+                for (const a of Array.from(src.attributes)) el.setAttribute(a.name, a.value);
+                el.textContent = pd.tag === "SOLD OUT" ? "Sold Out" : "Add to Cart";
+                el.style.pointerEvents = pd.tag === "SOLD OUT" ? "none" : "";
+                el.style.opacity = pd.tag === "SOLD OUT" ? "0.6" : "";
+            }
+        };
+    } else {
+        const note = document.getElementById("cartSnipcartNote");
+        if (note) note.style.display = "block";
+    }
 
     /* Nav readability: handled in CSS — transparent over the hero,
        solid frosted bar once the page scrolls (nav.scrolled). */
