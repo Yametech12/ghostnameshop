@@ -1,69 +1,93 @@
 # GHOSTNAME WORLDWIDE
 
-Faceless.Fearless.Forever.
+Faceless. Fearless. Forever.
 
-Premium anonymous streetwear. Static storefront — no framework, no build step required, deployable anywhere.
+Premium anonymous streetwear — Next.js storefront with **server-side PayPal
+checkout** and **automatic Printify fulfillment**. USD-only pricing.
 
-## Project Overview
+## Architecture
 
-The storefront is a single `index.html` with embedded CSS and JavaScript. Product data lives in **`products.json`**, which doubles as the **Snipcart JSON-crawler validation file** — Snipcart's servers fetch it to verify real prices at checkout. The brand mark is a faceless ski mask: anonymous by design, worn worldwide.
-
-## Commerce (Snipcart)
-
-Checkout is powered by [Snipcart](https://snipcart.com): hosted cart, real payments (card / Apple Pay / Google Pay), inventory, and order confirmation emails.
-
-1. Create a free Snipcart account → dashboard → **API keys**.
-2. Copy your **public** key into `index.html` (search for `SET_YOUR_SNIPCART_PUBLIC_KEY`).
-3. In the Snipcart dashboard, set your **default website domain** and allow your deployment domain(s) under *Store configuration → Domains & URLs* — the JSON crawler fetches `products.json` from there to validate orders.
-4. Test mode first: every order runs against the key prefix (`Mjcx...` test keys start with `Mj`), switch the key to go live.
-
-Until a key is set, the site stays fully browsable and the cart explains what's missing — no broken buy buttons.
-
-Prices: `products.json` publishes **fixed price points in USD / EUR / GBP / JPY**. The currency switcher changes both the displayed prices *and* the currency Snipcart charges — a customer never sees one currency and pays another.
-
-## Newsletter
-
-Both newsletter forms POST to an email-platform embedded-form endpoint (Mailchimp-style `subscribe/post?u=…&id=…`) — no backend needed. Replace the placeholder action in the boot block of `index.html` (search for `NEWSLETTER_ACTION`) with your audience's values, or swap in a Buttondown / ConvertKit form URL.
-
-Analytics (Plausible, cookieless) load **only** after a visitor accepts cookies; the footer's *Cookie Preferences* reopens the banner anytime.
-
-Social cards, sitemap URLs and the canonical tag use `https://ghostnameworldwide.com/` — swap in your real domain (search for `ghostnameworldwide.com` across `index.html`, `robots.txt`, `sitemap.xml` and the `legal/` pages).
-
-## Features
-
-- Full-screen hero (WebP + preload) with drifting ghost typography
-- Fixed navigation using difference blend mode, with a sampled readability fallback
-- Featured Drop and Archive product grids, category filters, live search
-- Product detail modal with gallery, size selector, quantity stepper
-- Snipcart-powered cart & hosted checkout; local mirror cart for display
-- Wishlist, recently-viewed, currency switcher (real multi-currency pricing)
-- Cookie consent that actually gates analytics; ESP-wired newsletter forms
-- Legal pages: [shipping](legal/shipping.html), [returns](legal/returns.html), [privacy](legal/privacy.html), [terms](legal/terms.html)
-- `robots.txt`, `sitemap.xml`, canonical URL, 1200×630 PNG social card (`summary_large_image`)
-- Accessible: skip link, focus traps, ARIA labels, reduced-motion support
-
-## Local Preview
-
-```bash
-npm run dev          # zero-dependency node server on 0.0.0.0:$PORT (default 3000)
+```
+storefront (public/store.html, 1:1 preserved)
+      │  cart handoff via sessionStorage
+      ▼
+/checkout  (Next.js client page)
+      │  POST /api/create-order   → server re-prices cart from public/products.json,
+      │                             records ledger intent, creates PayPal order
+      ▼
+PayPal Buttons → buyer approves (address collected inside PayPal)
+      │  POST /api/capture-order → capture, verify amount, record payment
+      ▼
+app/api/paypal-webhook  ←  PayPal server-to-server events (signature-verified)
+      │
+      ├─► Upstash Redis ledger  (idempotency + fail-safe audit trail)
+      └─► Printify create-order (mapped variants + PayPal-provided address)
+            └─► manual_review status if anything fails — no lost payments
 ```
 
-or any static server (e.g. `python3 -m http.server 8000`).
+- `public/store.html` — the original static storefront, preserved 1:1 (Snipcart
+  retired; cart is size-aware; hand-off to `/checkout`).
+- `app/api/*` — Node-runtime routes: create-order, capture-order, webhook.
+- `lib/catalog.ts` — server re-pricing; never trusts client prices.
+- `lib/catalog-map.ts` — **fill this in**: Printify product/variant ids.
+- `lib/ledger.ts` — Upstash Redis ledger (idempotent state machine).
+- `lib/fulfill.ts` — fulfillment orchestrator (fulfilled | manual_review).
 
-## Maintenance
+## Environment variables
+
+Set in **Settings → Environment** (sandbox) and in deploy env vars (production):
+
+| Key | Purpose |
+|---|---|
+| `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` | PayPal REST credentials |
+| `PAYPAL_API_BASE` | `https://api-m.sandbox.paypal.com` for sandbox, `https://api-m.paypal.com` for live |
+| `PAYPAL_WEBHOOK_ID` | Webhook id (PayPal dashboard → webhooks) |
+| `NEXT_PUBLIC_PAYPAL_CLIENT_ID` | Public client id for the browser JS SDK |
+| `PRINTIFY_API_TOKEN` / `PRINTIFY_SHOP_ID` | Printify API access |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Order ledger (free tier OK) |
+| `NEXT_PUBLIC_APP_URL` | Public base URL for PayPal return/cancel |
+
+## Setup steps
+
+1. **PayPal**: create a REST app at developer.paypal.com (sandbox first). Add
+   the credentials above. In the PayPal dashboard add a webhook pointing to
+   `https://YOUR-DOMAIN/api/paypal-webhook` subscribed to
+   `PAYMENT.CAPTURE.COMPLETED` (and `CHECKOUT.ORDER.COMPLETED` as a fallback).
+2. **Upstash**: create a free Redis database, copy the REST URL + token.
+3. **Printify**: publish your products, then map them in `lib/catalog-map.ts`
+   (product ids + variant ids per size). Unmapped products still sell — orders
+   land in the ledger as `manual_review` instead of failing.
+4. **Prices**: edit `public/products.json` (`price.usd`). Keep retail above
+   Printify cost + shipping + PayPal fees (~3.49% + $0.49).
+
+## Fail-safe guarantee
+
+Every payment transitions through the Redis ledger:
+`created → paid → fulfilling → fulfilled` (or `manual_review`). If the Printify
+call fails after a successful capture, the order stays flagged and contains
+everything needed to fulfill manually — no "paid but lost" orders.
+
+## Commands
 
 ```bash
-node scripts/optimize-images.mjs   # regenerate WebP derivatives after swapping JPEGs (needs: bun add -d sharp)
-bun run og                         # regenerate assets/og-image.png (pure stdlib Python)
-bun run build                      # assemble a deployable dist/
+bun install        # deps
+bun run dev        # Next dev server (binds 0.0.0.0:$PORT via Freebuff preview)
+bun run build      # production build
+bun run typecheck  # tsc --noEmit
 ```
 
-## Deployment
+## Static-first deployment
 
-Static files, zero configuration — Netlify Drop, `npx vercel`, or GitHub Pages from `main` / root. `products.json`, `assets/`, `legal/`, `robots.txt` and `sitemap.xml` must ship alongside `index.html`.
+The default build (`next build`) requires a Node server (`next start`). If your
+host is static-only, run `node scripts/build-static.mjs` to emit `out/`
+(storefront + static assets, checkout/API disabled) and point the builder at it.
 
-## License
+The storefront, `/assets`, `/legal`, `products.json` also ship unchanged from
+`public/` for any static host that can proxy API routes separately.
+
+## Legal
+
+`public/legal/` — shipping, returns, privacy, terms. The 2-units-per-style cap
+from the terms is enforced server-side in `lib/catalog.ts`.
 
 MIT — see [LICENSE](LICENSE).
-
-GHOSTNAME WORLDWIDE. Est. 2026.
