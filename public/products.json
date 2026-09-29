@@ -3,8 +3,13 @@
     "id": "p1",
     "name": "Phantom Heavyweight Hoodie",
     "cat": "Outerwear",
-    "url": "products.json",
-    "price": { "usd": 145, "eur": 133, "gbp": 115, "jpy": 22765 },
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 145,
+      "eur": 133,
+      "gbp": 115,
+      "jpy": 22765
+    },
     "tag": "NEW",
     "fabric": "Heavyweight Fleece",
     "img": "assets/images/product_phantom_hoodie_1790379242145.jpg",
@@ -15,8 +20,13 @@
     "id": "p2",
     "name": "Void Boxy Tee",
     "cat": "Tops",
-    "url": "products.json",
-    "price": { "usd": 68, "eur": 63, "gbp": 54, "jpy": 10676 },
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 68,
+      "eur": 63,
+      "gbp": 54,
+      "jpy": 10676
+    },
     "tag": "",
     "fabric": "Heavyweight Cotton",
     "img": "assets/images/product_void_tee_1790379252763.jpg",
@@ -27,8 +37,13 @@
     "id": "p3",
     "name": "Shadow Cargo Pants",
     "cat": "Bottoms",
-    "url": "products.json",
-    "price": { "usd": 120, "eur": 110, "gbp": 95, "jpy": 18840 },
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 120,
+      "eur": 110,
+      "gbp": 95,
+      "jpy": 18840
+    },
     "tag": "NEW",
     "fabric": "Utility Cotton Twill",
     "img": "assets/images/product_cargo_pants_1790379263399.jpg",
@@ -39,8 +54,13 @@
     "id": "p4",
     "name": "Eclipse Bomber Jacket",
     "cat": "Outerwear",
-    "url": "products.json",
-    "price": { "usd": 210, "eur": 193, "gbp": 166, "jpy": 32970 },
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 210,
+      "eur": 193,
+      "gbp": 166,
+      "jpy": 32970
+    },
     "tag": "",
     "fabric": "Heavy Twill",
     "img": "assets/images/product_bomber_jacket_1790379273617.jpg",
@@ -51,8 +71,13 @@
     "id": "p5",
     "name": "Ghost Knit Beanie",
     "cat": "Accessories",
-    "url": "products.json",
-    "price": { "usd": 42, "eur": 39, "gbp": 33, "jpy": 6594 },
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 42,
+      "eur": 39,
+      "gbp": 33,
+      "jpy": 6594
+    },
     "tag": "",
     "fabric": "Ribbed Knit",
     "img": "assets/images/product_knit_beanie_1790379290197.jpg",
@@ -63,8 +88,13 @@
     "id": "p6",
     "name": "Anon Zip Vest",
     "cat": "Outerwear",
-    "url": "products.json",
-    "price": { "usd": 98, "eur": 90, "gbp": 77, "jpy": 15386 },
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 98,
+      "eur": 90,
+      "gbp": 77,
+      "jpy": 15386
+    },
     "tag": "LIMITED",
     "fabric": "Utility Weave",
     "img": "assets/images/product_zip_vest_1790379301258.jpg",
@@ -75,20 +105,32 @@
     "id": "a1",
     "name": "Spectre Longsleeve",
     "cat": "Tops",
-    "url": "products.json",
-    "price": { "usd": 78, "eur": 72, "gbp": 62, "jpy": 12246 },
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 78,
+      "eur": 72,
+      "gbp": 62,
+      "jpy": 12246
+    },
     "tag": "SOLD OUT",
     "fabric": "Interlock Cotton",
     "img": "assets/images/product_void_tee_1790379252763.jpg",
     "webp": "assets/images/product_void_tee_1790379252763_960w.webp",
-    "initial": "A1"
+    "initial": "A1",
+    "stock": 0,
+    "allowOutOfStockPurchases": false
   },
   {
     "id": "a2",
     "name": "Mirage Trackpants",
     "cat": "Bottoms",
-    "url": "products.json",
-    "price": { "usd": 110, "eur": 101, "gbp": 87, "jpy": 17270 },
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 110,
+      "eur": 101,
+      "gbp": 87,
+      "jpy": 17270
+    },
     "tag": "",
     "fabric": "Heavy Double Knit",
     "img": "assets/images/product_cargo_pants_1790379263399.jpg",
@@ -99,12 +141,19 @@
     "id": "a3",
     "name": "Wraith Overshirt",
     "cat": "Outerwear",
-    "url": "products.json",
-    "price": { "usd": 165, "eur": 152, "gbp": 130, "jpy": 25905 },
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 165,
+      "eur": 152,
+      "gbp": 130,
+      "jpy": 25905
+    },
     "tag": "SOLD OUT",
     "fabric": "Brushed Cotton",
     "img": "assets/images/product_bomber_jacket_1790379273617.jpg",
     "webp": "assets/images/product_bomber_jacket_1790379273617_960w.webp",
-    "initial": "A3"
+    "initial": "A3",
+    "stock": 0,
+    "allowOutOfStockPurchases": false
   }
 ]
