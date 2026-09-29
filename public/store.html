@@ -8,7 +8,7 @@
 <link rel="canonical" href="https://ghostnameworldwide.com/">
 
 <!-- ===== SEO / SOCIAL (JSON-LD + Open Graph + Twitter) ===== -->
-<meta name="description" content="GHOSTNAME WORLDWIDE — premium anonymous streetwear. Faceless. Fearless. Forever. FW26 inaugural drop, limited runs, est. 2026.">
+<meta name="description" content="GHOSTNAME WORLDWIDE — premium anonymous streetwear. Faceless. Fearless. Forever. FW26 inaugural drop, made to order, est. 2026.">
 <meta property="og:title" content="GHOSTNAME WORLDWIDE — Premium Streetwear">
 <meta property="og:description" content="Faceless. Fearless. Forever. Premium anonymous streetwear. FW26 inaugural drop. Est. 2026.">
 <meta property="og:image" content="https://ghostnameworldwide.com/assets/og-image.png">
@@ -45,17 +45,6 @@
 <noscript>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 </noscript>
-
-<!-- ===== Snipcart — real hosted checkout (cart, payments, order capture).
-     Set your public API key below (Test key for sandbox, Live key to sell). ===== -->
-<script>
-window.SnipcartSettings = {
-    publicApiKey: "SET_YOUR_SNIPCART_PUBLIC_KEY",
-    loadStrategy: "on-user-interaction",
-    currency: "usd"
-};
-(function(){var c,d;(d=(c=window.SnipcartSettings).version)!=null||(c.version="3.0");var s,S;(S=(s=window.SnipcartSettings).timeoutDuration)!=null||(s.timeoutDuration=2750);var l,p;(p=(l=window.SnipcartSettings).domain)!=null||(l.domain="cdn.snipcart.com");var w,u;(u=(w=window.SnipcartSettings).protocol)!=null||(w.protocol="https");var m,g;(g=(m=window.SnipcartSettings).loadCSS)!=null||(m.loadCSS=!0);var y=window.SnipcartSettings.version.includes("v3.0.0-ci")||window.SnipcartSettings.version!="3.0"&&window.SnipcartSettings.version.localeCompare("3.4.0",void 0,{numeric:!0,sensitivity:"base"})===-1,f=["focus","mouseover","touchmove","scroll","keydown"];window.LoadSnipcart=o;document.readyState=="loading"?document.addEventListener("DOMContentLoaded",r):r();function r(){window.SnipcartSettings.loadStrategy?window.SnipcartSettings.loadStrategy=="on-user-interaction"&&(f.forEach(function(t){return document.addEventListener(t,o)}),setTimeout(o,window.SnipcartSettings.timeoutDuration)):o()}var a=!1;function o(){if(a)return;a=!0;let t=document.getElementsByTagName("head")[0],n=document.querySelector("#snipcart"),i=document.querySelector('src[src^="'.concat(window.SnipcartSettings.protocol,"://").concat(window.SnipcartSettings.domain,'"][src$="snipcart.js"]')),e=document.querySelector('link[href^="'.concat(window.SnipcartSettings.protocol,"://").concat(window.SnipcartSettings.domain,'"][href$="snipcart.css"]'));n||(n=document.createElement("div"),n.id="snipcart",n.setAttribute("hidden","true"),document.body.appendChild(n)),h(n),i||(i=document.createElement("script"),i.src="".concat(window.SnipcartSettings.protocol,"://").concat(window.SnipcartSettings.domain,"/themes/v").concat(window.SnipcartSettings.version,"/default/snipcart.js"),i.async=!0,t.appendChild(i)),!e&&window.SnipcartSettings.loadCSS&&(e=document.createElement("link"),e.rel="stylesheet",e.type="text/css",e.href="".concat(window.SnipcartSettings.protocol,"://").concat(window.SnipcartSettings.domain,"/themes/v").concat(window.SnipcartSettings.version,"/default/snipcart.css"),t.prepend(e)),f.forEach(function(v){return document.removeEventListener(v,o)})}function h(t){!y||(t.dataset.apiKey=window.SnipcartSettings.publicApiKey,window.SnipcartSettings.addProductBehavior&&(t.dataset.configAddProductBehavior=window.SnipcartSettings.addProductBehavior),window.SnipcartSettings.modalStyle&&(t.dataset.configModalStyle=window.SnipcartSettings.modalStyle),window.SnipcartSettings.currency&&(t.dataset.currency=window.SnipcartSettings.currency),window.SnipcartSettings.templatesUrl&&(t.dataset.templatesUrl=window.SnipcartSettings.templatesUrl))}})();
-</script>
 
 <style>
     :root {
@@ -406,11 +395,11 @@ window.SnipcartSettings = {
         color: var(--muted); font-size: 0.8rem; line-height: 1.6;
         max-width: 320px; margin-bottom: 24px;
     }
-    .atelier-card {
+    .production-card {
         background: #101014; border: 1px solid var(--line);
         padding: 16px; max-width: 340px;
     }
-    .atelier-status {
+    .production-status {
         display: flex; align-items: center; gap: 8px;
         font-size: 0.62rem; letter-spacing: 1.5px; font-weight: 700;
         text-transform: uppercase; color: #fff; margin-bottom: 12px;
@@ -423,22 +412,6 @@ window.SnipcartSettings = {
     @keyframes pulseGreen {
         0%, 100% { opacity: 1; transform: scale(1); }
         50% { opacity: 0.4; transform: scale(0.85); }
-    }
-    .atelier-clocks {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-        border-top: 1px solid var(--line); padding-top: 10px;
-    }
-    .atelier-clock-item span.city {
-        font-size: 0.58rem; letter-spacing: 1.5px; color: var(--muted);
-        text-transform: uppercase; display: block;
-    }
-    .atelier-clock-item span.time {
-        font-family: var(--font-head); font-size: 0.85rem; font-weight: 700;
-        color: #fff; letter-spacing: 1px; font-variant-numeric: tabular-nums;
-    }
-    .atelier-coords {
-        margin-top: 8px; font-size: 0.58rem; letter-spacing: 1px; color: var(--muted);
-        font-family: monospace;
     }
 
     footer h4 {
@@ -755,10 +728,6 @@ window.SnipcartSettings = {
     }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    /* ===== Local cart fallback: shown only until a Snipcart public key is
-       configured (see SET_YOUR_SNIPCART_PUBLIC_KEY in this file). With a key
-       set, the cart + checkout live in Snipcart's hosted widget instead. ===== */
-    body:not(.snipcart-unconfigured) .cart-drawer { display: none; }
 
     /* ===== Responsive ===== */
     @media (max-width: 860px) {
@@ -812,7 +781,7 @@ window.SnipcartSettings = {
     }
 </style>
 </head>
-<body class="snipcart-unconfigured">
+<body>
 
 <a class="skip-link" href="#main">Skip to content</a>
 <div id="progressBar" aria-hidden="true"></div>
@@ -827,11 +796,8 @@ window.SnipcartSettings = {
     </ul>
     <div class="nav-tools">
         <button class="icon-btn search-label" onclick="openSearch()" aria-label="Search products">Search</button>
-        <select class="currency-select" id="currencySelect" onchange="setCurrency(this.value)" aria-label="Currency" title="Currency — display prices and Snipcart charge currency">
+        <select class="currency-select" id="currencySelect" onchange="setCurrency(this.value)" aria-label="Currency" title="All prices and charges in USD">
             <option value="USD">USD $</option>
-            <option value="EUR">EUR €</option>
-            <option value="GBP">GBP £</option>
-            <option value="JPY">JPY ¥</option>
         </select>
         <span class="cart-icon" id="wlCount" aria-live="polite" title="Wishlist">♥ 0</span>
         <span class="cart-icon" onclick="toggleCart()" role="button" tabindex="0" onkeydown="if(event.key==='Enter')toggleCart()" aria-label="Open cart">CART (<span id="cartCount">0</span>)</span>
@@ -844,7 +810,7 @@ window.SnipcartSettings = {
 <section class="hero">
     <div class="hero-content">
         <h1>GHOSTNAME WORLDWIDE</h1>
-        <div class="sub">FW26 Inaugural Drop — Heavyweight cotton, cut boxy, no loud logos</div>
+        <div class="sub">FW26 Inaugural Drop — Cut boxy, no loud logos. Made to order.</div>
         <a href="#shop" class="cta">Explore Collection</a>
     </div>
     <div class="scroll-hint">SCROLL ↓</div>
@@ -853,8 +819,8 @@ window.SnipcartSettings = {
 <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
         <span>NEW DROP FW26·</span><span>FREE WORLDWIDE SHIPPING OVER $150·</span>
-        <span>LIMITED 500-PIECE RUN·</span><span>NEW DROP FW26·</span>
-        <span>FREE WORLDWIDE SHIPPING OVER $150·</span><span>LIMITED 500-PIECE RUN·</span>
+        <span>MADE TO ORDER·</span><span>NEW DROP FW26·</span>
+        <span>FREE WORLDWIDE SHIPPING OVER $150·</span><span>MADE TO ORDER·</span>
     </div>
 </div>
 
@@ -880,7 +846,7 @@ window.SnipcartSettings = {
 <section class="feature" id="about">
     <div class="feature-text">
         <h2>Faceless.<br>Fearless.<br>Forever.</h2>
-        <p>We make a small number of garments and make them well: 500 GSM French terry and dense technical twill, cut boxy with dropped shoulders. Limited runs of 500 per style — no restocks, no loud logos.</p>
+        <p>Every GHOSTNAME piece is made to order: printed, stitched, and packed only when you order it. Cut boxy with dropped shoulders, no loud logos — and no wasted inventory.</p>
         <a href="#collection">Explore Selected Works →</a>
     </div>
     <div class="feature-visual" style="background: url('assets/images/hero_streetwear_fw26_1790379228007.webp') center/cover no-repeat; position: relative;">
@@ -930,8 +896,8 @@ window.SnipcartSettings = {
                 </svg>
             </div>
             <div class="footer-pre-text">
-                <h5>Worldwide Courier</h5>
-                <p>Tracked DHL &amp; FedEx delivery, worldwide</p>
+                <h5>Worldwide Shipping</h5>
+                <p>Made to order, delivered worldwide with tracking</p>
             </div>
         </div>
         <div class="footer-pre-item">
@@ -942,8 +908,8 @@ window.SnipcartSettings = {
                 </svg>
             </div>
             <div class="footer-pre-text">
-                <h5>Duties Included</h5>
-                <p>Customs and import taxes covered upfront</p>
+                <h5>Secure Checkout</h5>
+                <p>Processed by PayPal, verified server-side</p>
             </div>
         </div>
         <div class="footer-pre-item">
@@ -956,7 +922,7 @@ window.SnipcartSettings = {
             </div>
             <div class="footer-pre-text">
                 <h5>14-Day Returns</h5>
-                <p>Free return label, no questions asked</p>
+                <p>Refunds within 48 hours of inspection</p>
             </div>
         </div>
         <div class="footer-pre-item">
@@ -971,15 +937,15 @@ window.SnipcartSettings = {
                 </svg>
             </div>
             <div class="footer-pre-text">
-                <h5>Heavyweight Fabric</h5>
-                <p>500 GSM French terry and dense twill</p>
+                <h5>Made to Order</h5>
+                <p>Produced on demand — no bulk stock, no waste</p>
             </div>
         </div>
     </div>
 
     <!-- Main Footer Grid -->
     <div class="footer-main">
-        <!-- Col 1: Brand & Atelier Hub -->
+        <!-- Col 1: Brand & Production Hub -->
         <div class="foot-brand">
             <div class="foot-brand-head">
                 <div class="foot-brand-monogram" aria-hidden="true">
@@ -990,24 +956,14 @@ window.SnipcartSettings = {
                 </div>
                 <div class="foot-brand-title">GHOSTNAME®</div>
             </div>
-            <p>Independent streetwear in limited runs of 500. Heavyweight cotton, boxy cuts, nothing loud. Designed in Tokyo, shipped worldwide.</p>
+            <p>Independent streetwear, made to order. Boxy cuts, nothing loud. Produced on demand by our fulfillment partner and shipped worldwide.</p>
             
-            <div class="atelier-card">
-                <div class="atelier-status">
+            <div class="production-card">
+                <div class="production-status">
                     <span class="pulse-dot"></span>
-                    <span>Atelier Dispatch · Active</span>
+                    <span>Production Status · Active</span>
                 </div>
-                <div class="atelier-clocks">
-                    <div class="atelier-clock-item">
-                        <span class="city">Tokyo Atelier</span>
-                        <span class="time" id="clockTokyo">--:--:-- JST</span>
-                    </div>
-                    <div class="atelier-clock-item">
-                        <span class="city">New York Vault</span>
-                        <span class="time" id="clockNYC">--:--:-- EDT</span>
-                    </div>
-                </div>
-                <div class="atelier-coords">35.6764° N, 139.6500° E // SHIBUYA-KU, TOKYO</div>
+                <p style="color:var(--muted); font-size:0.78rem; line-height:1.6;">Every order goes into production the moment payment is confirmed — printed, stitched, and packed on demand by our fulfillment partner, then shipped worldwide with tracking.</p>
             </div>
         </div>
 
@@ -1019,7 +975,7 @@ window.SnipcartSettings = {
                 <li><button class="foot-link" onclick="quickNavCategory('Outerwear')"><span class="arrow">→</span> Outerwear & Twill</button></li>
                 <li><button class="foot-link" onclick="quickNavCategory('Tops')"><span class="arrow">→</span> Tops & Boxy Tees</button></li>
                 <li><button class="foot-link" onclick="quickNavCategory('Bottoms')"><span class="arrow">→</span> Cargoes & Pants</button></li>
-                <li><button class="foot-link" onclick="quickNavCategory('Accessories')"><span class="arrow">→</span> Merino Knitwear</button></li>
+                <li><button class="foot-link" onclick="quickNavCategory('Accessories')"><span class="arrow">→</span> Accessories &amp; Knits</button></li>
                 <li><a href="#collection" class="foot-link"><span class="arrow">→</span> The Archive (Vault)</a></li>
             </ul>
         </div>
@@ -1029,11 +985,11 @@ window.SnipcartSettings = {
             <h4>Client Concierge</h4>
             <ul>
                 <li><a href="legal/shipping.html" class="foot-link"><span class="arrow">→</span> Shipping & Transit</a></li>
-                <li><a href="legal/returns.html" class="foot-link"><span class="arrow">→</span> Vault Returns (14-Day)</a></li>
+                <li><a href="legal/returns.html" class="foot-link"><span class="arrow">→</span> Returns (14-Day)</a></li>
                 <li><button class="foot-link" onclick="openInfoModal('faq')"><span class="arrow">→</span> Garment Care & FAQ</button></li>
                 <li><button class="foot-link" onclick="openSizeGuide()"><span class="arrow">→</span> Size & Fit Matrix</button></li>
                 <li><button class="foot-link" onclick="trackOrderPrompt()"><span class="arrow">→</span> Track Dispatch</button></li>
-                <li><button class="foot-link" onclick="openInfoModal('sourcing')"><span class="arrow">→</span> Fabric Craftsmanship</button></li>
+                <li><button class="foot-link" onclick="openInfoModal('sourcing')"><span class="arrow">→</span> Production &amp; Craft</button></li>
             </ul>
         </div>
 
@@ -1059,14 +1015,14 @@ window.SnipcartSettings = {
         <div>
             <h4>Authenticity</h4>
             <div class="payment-badges" aria-label="Accepted Payment Methods">
-                <span class="pay-badge">Apple Pay</span>
-                <span class="pay-badge">Google Pay</span>
+                <span class="pay-badge">PayPal</span>
+                <span class="pay-badge">Debit &amp; Credit</span>
                 <span class="pay-badge">Visa</span>
                 <span class="pay-badge">Mastercard</span>
                 <span class="pay-badge">Amex</span>
                 <span class="pay-badge">Discover</span>
             </div>
-            <p class="security-note">Checkout is processed on an encrypted gateway by Snipcart — card data never touches our servers. Every order includes a cryptographically verifiable provenance certificate.</p>
+            <p class="security-note">Checkout is processed by PayPal — card data never touches our servers. Every order is verified server-side against a durable ledger and fulfilled automatically with our production partner.</p>
         </div>
     </div>
 
@@ -1082,7 +1038,7 @@ window.SnipcartSettings = {
             <button class="foot-legal-btn" onclick="openCookieBanner()">Cookie Preferences</button>
             <a class="foot-legal-btn" href="legal/shipping.html">Shipping</a>
             <a class="foot-legal-btn" href="legal/returns.html">Returns & Refunds</a>
-            <button class="foot-legal-btn" onclick="openInfoModal('sourcing')">Ethical Production</button>
+            <button class="foot-legal-btn" onclick="openInfoModal('sourcing')">Production &amp; Craft</button>
         </div>
         <div class="foot-bottom-right">
             <span id="madeWith">Made with intent in <span id="eggCity">—</span></span>
@@ -1179,20 +1135,20 @@ window.SnipcartSettings = {
         <div id="checkoutFormView">
         <div class="checkout-head">
             <h3 id="coTitle">Order Review</h3>
-            <p>Direct worldwide dispatch from the Tokyo atelier. Insured courier delivery, duties pre-paid.</p>
+            <p>Every item is produced on demand, then shipped worldwide with tracking.</p>
         </div>
         <div class="checkout-summary-box">
             <div class="checkout-row"><span>Items (<span id="coItemCount">0</span>)</span><span id="coSubtotal">$0</span></div>
-            <div class="checkout-row"><span>Worldwide Express Shipping</span><span>FREE</span></div>
+            <div class="checkout-row"><span>Shipping</span><span>Free over $150</span></div>
             <div class="checkout-row total"><span>Total — charged in <span id="coCurrency">USD</span></span><span id="coTotal">$0</span></div>
         </div>
-        <p style="color:var(--muted); font-size:0.78rem; margin-top:16px; line-height:1.6;">Payment runs on Snipcart's encrypted hosted checkout — card, Apple Pay and Google Pay. Card data never touches our servers.</p>
+        <p style="color:var(--muted); font-size:0.78rem; margin-top:16px; line-height:1.6;">You'll pay securely with PayPal — balance, or debit &amp; credit card. Card data never touches our servers.</p>
         <button type="button" class="checkout-submit-btn" onclick="checkoutHandoff(event)">Continue to Secure Checkout →</button>
     </div>
     <div id="checkoutSuccessView" class="checkout-success-view" style="display: none;">
         <div class="checkout-check-badge">✓</div>
         <h3>Order Confirmed</h3>
-        <p style="color:var(--muted); font-size: 0.85rem; margin-top: 10px;" id="coConfirmMsg">Payment received. Dispatch tracking details are on their way to your email.</p>
+        <p style="color:var(--muted); font-size: 0.85rem; margin-top: 10px;" id="coConfirmMsg">Payment received. Your order is in production — tracking details are on their way to your email.</p>
         <button class="checkout-submit-btn" onclick="finishCheckout()">Return to Storefront</button>
     </div>
 </div>
@@ -1211,40 +1167,39 @@ window.SnipcartSettings = {
 
     <!-- Tab 1: Shipping -->
     <div class="info-tab-content active" id="tabShipping">
-        <h3 id="infoModalTitle">Worldwide Express Shipping</h3>
-        <p>All GHOSTNAME WORLDWIDE orders are packed in insured, tamper-evident matte black boxes and dispatched directly from our Tokyo distribution atelier.</p>
+        <h3 id="infoModalTitle">Worldwide Shipping</h3>
+        <p>All GHOSTNAME WORLDWIDE items are made to order: production begins the moment your order is confirmed, and your parcel ships worldwide with tracking as soon as it's finished.</p>
         <div class="info-qa-card">
-            <h4>Complimentary Courier Dispatch</h4>
-            <p>Orders exceeding $150 USD qualify for free priority shipping. Under $150, flat-rate courier dispatch is calculated based on destination.</p>
+            <h4>Free Shipping Over $150</h4>
+            <p>Orders exceeding $150 USD ship free worldwide. Under $150, a flat $12 USD rate applies at checkout.</p>
         </div>
         <div class="info-qa-card">
-            <h4>Transit Estimates</h4>
-            <p>• Japan & East Asia: 1–2 business days via Yamato Transport<br>
-               • North America (US & Canada): 2–3 business days via DHL Express Priority<br>
-               • Europe & United Kingdom: 3–4 business days via FedEx International<br>
-               • Rest of World: 3–5 business days via DHL Global Express</p>
+            <h4>Production &amp; Transit</h4>
+            <p>• Production: 2–5 business days — every item is printed and stitched on demand<br>
+               • Transit: tracked worldwide shipping after production; timing varies by destination<br>
+               • Tracking: a tracking link is emailed the moment your order ships</p>
         </div>
         <div class="info-qa-card">
             <h4>Duties & Tariffs</h4>
-            <p>DDP (Delivery Duty Paid): All international customs, duties, and local clearance tariffs are pre-calculated and covered by GHOSTNAME. No unexpected charges at your door.</p>
+            <p>International orders may be subject to import duties and local taxes, set by your customs authority. These charges are not included in your order total and are the recipient's responsibility.</p>
         </div>
     </div>
 
     <!-- Tab 2: Returns -->
     <div class="info-tab-content" id="tabReturns">
-        <h3>14-Day Vault Returns Policy</h3>
-        <p>Because every GHOSTNAME release is strictly limited to 500 numbered units, we uphold a meticulous 14-day archival condition standard.</p>
+        <h3>14-Day Returns Policy</h3>
+        <p>Every GHOSTNAME piece is made to order, and we hold a 14-day return window from the delivery date.</p>
         <div class="info-qa-card">
             <h4>Eligibility Standards</h4>
-            <p>Items must be in unworn, unwashed condition with the tamper-evident woven security loop intact, alongside all original dust bags and heavy-gauge hangtags.</p>
+            <p>Items must be unworn and unwashed, with all original tags attached, and returned within 14 days of delivery.</p>
         </div>
         <div class="info-qa-card">
             <h4>Return Portal Process</h4>
-            <p>Initiate your return by clicking "Track Dispatch" or reaching concierge@ghostnameworldwide.com. A prepaid return DHL airway bill will be generated immediately.</p>
+            <p>Email concierge@ghostnameworldwide.com with your order number and we'll arrange your return — including a return label for damaged or incorrect items.</p>
         </div>
         <div class="info-qa-card">
             <h4>Exchange & Vault Credit</h4>
-            <p>If sizing needs adjustment and inventory allows, an exchange will be prioritized immediately. Alternatively, a 100% refund is processed to the original payment method within 48 hours of inspection.</p>
+            <p>If sizing needs adjustment and stock allows, an exchange is prioritized. Otherwise, a 100% refund is processed to the original payment method within 48 hours of inspection.</p>
         </div>
     </div>
 
@@ -1252,8 +1207,8 @@ window.SnipcartSettings = {
     <div class="info-tab-content" id="tabFaq">
         <h3>Garment Care & Archive FAQ</h3>
         <div class="info-qa-card">
-            <h4>What makes GHOSTNAME fabric distinct?</h4>
-            <p>Our hoodies and boxy tees are milled from 500 GSM loopback French terry and 320 GSM combed jersey cotton in Wakayama, Japan, using vintage sinker-wheel machines that preserve natural yarn elasticity.</p>
+            <h4>How are GHOSTNAME pieces made?</h4>
+            <p>Every piece is made to order by our print-on-demand fulfillment partner. Production starts the moment your order is placed — nothing sits in a warehouse, and nothing is made that nobody ordered.</p>
         </div>
         <div class="info-qa-card">
             <h4>How do the garments fit?</h4>
@@ -1261,7 +1216,7 @@ window.SnipcartSettings = {
         </div>
         <div class="info-qa-card">
             <h4>Are sold-out archive pieces ever restocked?</h4>
-            <p>Never. Each collection is produced in a single run of 500 pieces per style. Once an item enters "SOLD OUT" status in the Archive, the pattern is permanently retired to ensure collector scarcity.</p>
+            <p>Archive pieces marked SOLD OUT are retired permanently. Current FW26 pieces are made to order, so they remain in production.</p>
         </div>
         <div class="info-qa-card">
             <h4>Recommended Washing & Longevity</h4>
@@ -1298,15 +1253,15 @@ window.SnipcartSettings = {
 
     <!-- Tab 6: Sourcing -->
     <div class="info-tab-content" id="tabSourcing">
-        <h3>Ethical Production & Material Craft</h3>
-        <p>We build clothing to endure decades, not weeks. Our production footprint is small, deliberate, and carbon-offset.</p>
+        <h3>Made to Order, Made Responsibly</h3>
+        <p>We produce only what's ordered. Print-on-demand means no overstock, no deadstock landfill, and no wasted materials.</p>
         <div class="info-qa-card">
-            <h4>Raw Material Standards</h4>
-            <p>100% GOTS-certified organic cotton, mulesing-free New Zealand merino wool, and OEKO-TEX Standard 100 non-toxic reactive dyes.</p>
+            <h4>On-Demand Production</h4>
+            <p>Each item is printed, stitched, and packed by our fulfillment partner only after your order is confirmed — no bulk runs, no inventory risk, less waste.</p>
         </div>
         <div class="info-qa-card">
-            <h4>Fair Living Wage Atelier Partners</h4>
-            <p>All sewing and finishing occurs in specialized boutique facilities in Tokyo, Okayama, and Porto where craftspeople receive double living wages and comprehensive pension coverage.</p>
+            <h4>Worldwide Fulfillment</h4>
+            <p>Orders route to the fulfillment facility closest to you for faster, lower-impact delivery — then ship worldwide with tracking.</p>
         </div>
     </div>
 </div>
@@ -1332,22 +1287,19 @@ window.SnipcartSettings = {
 const SIZES = ["S", "M", "L", "XL"];
 let activeCategory = "All";
 
-/* Catalog is hydrated from products.json — the same file Snipcart's JSON
-   crawler uses to validate real order prices. Add inventory there. */
+/* Catalog is hydrated from products.json — add inventory there. */
 let ALL = [];
 let products = [];
 let archive = [];
 
-/* Currency: one table drives BOTH the displayed prices and the currency
-   Snipcart charges in. Each non-USD column is a fixed price point defined
-   in products.json (a real multi-currency price, not a fake conversion). */
+/* Currency: prices display in USD only. The charge currency is always USD —
+   totals are recomputed server-side from products.json before payment. */
 const RATES  = { USD: 1, EUR: 0.92, GBP: 0.79, JPY: 157 };
 const dpFor  = c => (c === "JPY" ? 0 : 2);
 let currency = localStorage.getItem("gn_currency") || "USD";
 let cart     = JSON.parse(localStorage.getItem("gn_cart") || "[]");
 let wishlist = new Set(JSON.parse(localStorage.getItem("gn_wishlist") || "[]"));
 let recent   = JSON.parse(localStorage.getItem("gn_recent") || "[]");
-let SNIPCART_CONFIGURED = false;
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function fmt(usd) {
@@ -1454,96 +1406,29 @@ function toggleWish(id, e) {
 }
 
 /* ============================================================
-   CART → Snipcart. The local list is a lightweight display mirror;
-   the source of truth (and the payment) is Snipcart's hosted cart.
-   Until a public API key is set (see SET_YOUR_SNIPCART_PUBLIC_KEY),
-   the site stays browsable and checkout explains what's missing.
+   CART — local mirror with size-aware lines. The source of truth for
+   payment is the /checkout page: totals are recomputed server-side and
+   charged through PayPal, then fulfillment is automatic via Printify.
    ============================================================ */
-let snipcartBound = false;
-
-function SnipcartReady(timeout) {
-    timeout = timeout || 8000;
-    return new Promise((resolve, reject) => {
-        const t0 = Date.now();
-        (function poll() {
-            if (window.Snipcart && window.Snipcart.api && window.Snipcart.api.cart) return resolve(window.Snipcart);
-            if (Date.now() - t0 > timeout) return reject(new Error("snipcart-timeout"));
-            setTimeout(poll, 120);
-        })();
-    });
-}
-
-function addToCart(id, qty, e) {
+function addToCart(id, qty, e, size) {
     if (e) e.stopPropagation();               /* add-btn must not open the modal */
     const p = ALL.find(x => x.id === id);
     if (!p || p.tag === "SOLD OUT") return;
-    const line = cart.find(c => c.id === id);
-    line ? line.qty += qty : cart.push({ id: p.id, name: p.name, price: unitPrice(p), qty });
+    const sz = size || "M";
+    const line = cart.find(c => c.id === id && c.size === sz);
+    line ? line.qty += qty : cart.push({ id: p.id, name: p.name, price: unitPrice(p), qty, size: sz });
     saveCart(); updateCart();
-    if (!SNIPCART_CONFIGURED) {
-        toast(p.name + " added — connect a Snipcart key to check out.");
-        return;
-    }
-    window.LoadSnipcart();
-    SnipcartReady()
-        .then(api => api.cart.items.add({
-            id: p.id,
-            name: p.name,
-            price: unitPrice(p),
-            url: new URL(p.url || "products.json", location.href).href,
-            quantity: qty
-        }))
-        .then(() => Snipcart.api.theme.cart.open())
-        .catch(err => {
-            console.warn("[snipcart] add failed:", err);
-            toast("Could not sync the item — try again.");
-        });
+    toast(p.name + " (" + sz + ") added — review your cart to check out.");
 }
 function cartQty(i, d, e) {
     if (e) e.stopPropagation();
     cart[i].qty = Math.max(1, cart[i].qty + d);
-    saveCart(); updateCart(); syncQtyToSnipcart();
+    saveCart(); updateCart();
 }
 function removeItem(i, e) {
     if (e) e.stopPropagation();
-    const line = cart[i];
     cart.splice(i, 1); saveCart(); updateCart();
-    if (SNIPCART_CONFIGURED && window.SnipcartReady) {
-        SnipcartReady().then(api => {
-            const it = api.cart.items.items.find(x => x.id === line.id);
-            if (it) api.cart.items.remove(it.uniqueId);
-        }).catch(() => {});
-    }
 }
-function syncQtyToSnipcart() {
-    if (!SNIPCART_CONFIGURED || !window.SnipcartReady) return;
-    SnipcartReady().then(api => {
-        cart.forEach(line => {
-            const it = api.cart.items.items.find(x => x.id === line.id);
-            if (it && it.quantity !== line.qty) api.cart.items.update({ uniqueId: it.uniqueId, quantity: line.qty });
-        });
-    }).catch(() => {});
-}
-function syncCartFromSnipcart() {
-    if (!(window.Snipcart && window.Snipcart.api)) return;
-    try {
-        const items = (Snipcart.api.cart.items && Snipcart.api.cart.items.items) || [];
-        cart = items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.quantity }));
-        saveCart(); updateCart();
-    } catch (err) { /* widget mid-update */ }
-}
-function bindSnipcartEvents() {
-    if (snipcartBound || !(window.Snipcart && window.Snipcart.events)) return;
-    snipcartBound = true;
-    Snipcart.events.on("order.completed", () => {
-        cart = []; saveCart(); updateCart();
-        toast("Payment received — order confirmation on its way to your inbox.");
-    });
-    Snipcart.events.on("item.added", syncCartFromSnipcart);
-    Snipcart.events.on("item.updated", syncCartFromSnipcart);
-    Snipcart.events.on("item.removed", syncCartFromSnipcart);
-}
-document.addEventListener("snipcart.ready", bindSnipcartEvents);
 function saveCart() { localStorage.setItem("gn_cart", JSON.stringify(cart)); }
 
 function updateCart() {
@@ -1553,7 +1438,7 @@ function updateCart() {
     items.innerHTML = cart.length === 0 ? '<p class="cart-empty">Your cart is empty.</p>' :
         cart.map((c, i) => `
             <div class="cart-line">
-                <span>${c.name}<br><span style="color:var(--muted);font-size:0.7rem;">× ${c.qty}</span></span>
+                <span>${c.name}<br><span style="color:var(--muted);font-size:0.7rem;">× ${c.qty}${c.size ? " · " + c.size : ""}</span></span>
                 <span class="cart-line-right">
                     ${fmt(c.price * c.qty)}
                     <span class="cart-qty">
@@ -1568,25 +1453,13 @@ function updateCart() {
 }
 
 function toggleCart() {
-    if (SNIPCART_CONFIGURED) {
-        window.LoadSnipcart();
-        SnipcartReady().then(() => Snipcart.api.theme.cart.open())
-            .catch(() => toast("Secure checkout is loading — try again."));
-        return;
-    }
     document.getElementById("cartDrawer").classList.toggle("open");
     document.getElementById("overlay").classList.toggle("show");
 }
 
 function checkout() {
     if (cart.length === 0) { toast("Your cart is empty."); return; }
-    if (SNIPCART_CONFIGURED) {
-        if (document.getElementById("cartDrawer").classList.contains("open")) toggleCart();
-        window.LoadSnipcart();
-        SnipcartReady().then(() => Snipcart.api.theme.cart.open()).catch(() => {});
-        return;
-    }
-    /* Fallback review view — shown until a Snipcart public key is configured */
+    /* Review totals here, then hand off to the secure PayPal checkout page */
     const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
     const count = cart.reduce((s, c) => s + c.qty, 0);
     document.getElementById("coItemCount").textContent = count;
@@ -1602,9 +1475,11 @@ function checkoutHandoff(e) {
     if (e) e.preventDefault();
     if (cart.length === 0) { toast("Your cart is empty."); return; }
     if (document.getElementById("cartDrawer").classList.contains("open")) toggleCart();
-    window.LoadSnipcart();
-    SnipcartReady().then(() => Snipcart.api.theme.cart.open())
-        .catch(() => toast("Secure checkout is loading — try again."));
+    const items = cart.map(c => ({ id: c.id, size: c.size || "M", qty: c.qty }));
+    try {
+        sessionStorage.setItem("gn_checkout", JSON.stringify({ items, ts: Date.now() }));
+    } catch (err) { /* storage blocked - cart persists in localStorage */ }
+    window.location.href = "/checkout";
 }
 
 function closeCheckout() {
@@ -1640,7 +1515,7 @@ function openProduct(id) {
     document.getElementById("pdName").textContent = pd.name;
     document.getElementById("pdPrice").textContent = fmt(unitPrice(pd));
     document.getElementById("pdDesc").textContent =
-        "Cut from " + (pd.fabric || "heavyweight 500 GSM cotton") + ". Boxy fit with dropped shoulders and double-needle stitching. Limited run of 500 — no restocks.";
+        "Made to order in " + (pd.fabric || "premium heavyweight fabric") + ". Boxy fit with dropped shoulders. Produced on demand by our fulfillment partner, shipped worldwide.";
     document.getElementById("pdAdd").disabled = pd.tag === "SOLD OUT";
     document.getElementById("pdAdd").textContent = pd.tag === "SOLD OUT" ? "Sold Out" : "Add to Cart";
 
@@ -1694,7 +1569,7 @@ function pdQty(d) {
 }
 function pdAddToCart() {
     if (!pd || pd.tag === "SOLD OUT") return;   /* sold out can never be added */
-    addToCart(pd.id, pdQtyVal);
+    addToCart(pd.id, pdQtyVal, null, pdSize);
     closeModal();
     toast(pd.name + " × " + pdQtyVal + " (" + pdSize + ") added");
 }
@@ -1752,24 +1627,6 @@ function trackOrderPrompt() {
     toast("Dispatch tracking: enter tracking ID from your confirmation email or order receipt.");
 }
 
-function initAtelierClocks() {
-    function update() {
-        const now = new Date();
-        const tyo = new Intl.DateTimeFormat('en-US', {
-            timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-        }).format(now);
-        const nyc = new Intl.DateTimeFormat('en-US', {
-            timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-        }).format(now);
-        const elTyo = document.getElementById("clockTokyo");
-        const elNyc = document.getElementById("clockNYC");
-        if (elTyo) elTyo.textContent = tyo + " JST";
-        if (elNyc) elNyc.textContent = nyc + " EDT";
-    }
-    update();
-    setInterval(update, 1000);
-}
-
 /* ============================================================
    LIGHTBOX — arrow keys + Esc, wraparound navigation
    ============================================================ */
@@ -1808,7 +1665,7 @@ function renderSearch(q) {
                     <img src="${p.webp || p.img}" alt="${p.name}" loading="lazy" decoding="async" style="width:40px; height:48px; object-fit:cover; background:#161619;">
                     <span>${p.name}<br><span class="sh-cat">${p.cat}${p.tag ? " · " + p.tag : ""}</span></span>
                 </div>
-                <span>${fmt(p.price)}</span>
+                <span>${fmt(unitPrice(p))}</span>
             </button>`).join("");
 }
 
@@ -1816,13 +1673,11 @@ function renderSearch(q) {
    CURRENCY — re-price grids, cart, modal, search, recents live
    ============================================================ */
 function setCurrency(c) {
-    if (!RATES[c]) return;
+    if (c !== "USD") c = "USD";   /* USD-only storefront */
     currency = c;
     localStorage.setItem("gn_currency", c);
     const sel = document.getElementById("currencySelect");
     if (sel && sel.value !== c) sel.value = c;
-    /* Display prices AND the real charge currency move together: */
-    if (window.SnipcartSettings) window.SnipcartSettings.currency = c.toLowerCase();
     renderGrid(products, "productGrid");
     renderGrid(archive, "archiveGrid");
     renderRecent(); updateCart(); updateWishCount(); observeCards();
@@ -1977,12 +1832,11 @@ document.addEventListener("keydown", e => {
    BOOT
    ============================================================ */
 /* Easter egg — rotates every page load */
-const CITIES = ["Tokyo", "Berlin", "Seoul", "London", "New York", "Manila", "Paris", "everywhere"];
+const CITIES = ["The Vault", "The Archive", "FW26", "Everywhere", "On Demand", "The Void"];
 document.getElementById("eggCity").textContent = CITIES[Math.floor(Math.random() * CITIES.length)];
 
 (async function boot() {
-    /* Catalog comes from products.json — the same file Snipcart's JSON
-       crawler validates orders against. Add inventory there, not here. */
+    /* Catalog comes from products.json — add inventory there, not here. */
     try {
         const res = await fetch("products.json");
         ALL = await res.json();
@@ -1994,11 +1848,6 @@ document.getElementById("eggCity").textContent = CITIES[Math.floor(Math.random()
     products = ALL.filter(p => p.id.charAt(0) === "p");
     archive  = ALL.filter(p => p.id.charAt(0) === "a");
 
-    /* Snipcart public key configured? → hosted cart takes over checkout. */
-    SNIPCART_CONFIGURED = !/SET_YOUR_SNIPCART_PUBLIC_KEY/.test(
-        (window.SnipcartSettings && window.SnipcartSettings.publicApiKey) || "");
-    document.body.classList.toggle("snipcart-unconfigured", !SNIPCART_CONFIGURED);
-
     /* Newsletter → ESP embedded-form endpoint (no backend needed).
        Swap in your audience's u/id values from the Mailchimp signup form,
        or the equivalent endpoint for Buttondown / ConvertKit. */
@@ -2009,10 +1858,6 @@ document.getElementById("eggCity").textContent = CITIES[Math.floor(Math.random()
         f.rel = "noopener";
         f.addEventListener("submit", () => toast("You're on the list. Check your inbox to confirm."));
     });
-
-    /* Load Snipcart only once a key is present. */
-    if (SNIPCART_CONFIGURED && window.LoadSnipcart) window.LoadSnipcart();
-    bindSnipcartEvents();
 
     /* Restore analytics consent before anything else runs. */
     if (localStorage.getItem("gn_cookies") === "accepted") initAnalytics();
@@ -2028,7 +1873,6 @@ document.getElementById("eggCity").textContent = CITIES[Math.floor(Math.random()
     updateWishCount();
     updateCurrencyNotes();
     initCookies();
-    initAtelierClocks();
     observeCards();
 })();
 </script>

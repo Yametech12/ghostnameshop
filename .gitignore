@@ -4,4 +4,10 @@ Thumbs.db
 node_modules/
 *.log
 .env
+.env.local
+.env*.local
 dist/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
