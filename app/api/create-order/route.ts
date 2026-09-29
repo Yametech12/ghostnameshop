@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid cart lines" }, { status: 400 });
   }
 
-  const resolved = resolveCart(lines);
+  const resolved = await resolveCart(lines);
   if (resolved.lines.length === 0 || resolved.total <= 0) {
     return NextResponse.json({ error: "Cart is empty or unpurchasable" }, { status: 400 });
   }
