@@ -77,13 +77,13 @@ export async function createPayPalOrder(resolved: ResolvedCart, ledgerKey: strin
       {
         reference_id: "default",
         custom_id: ledgerKey,
-        description: "GHOSTNAME WORLDWIDE — FW26 drop",
+        description: "GHOSTNAME WORLDWIDE — Minimalist Boxy Tee",
         amount: { currency_code: "USD", value: toMoney(resolved.total), breakdown: {
           item_total: { currency_code: "USD", value: toMoney(resolved.subtotal) },
           shipping: { currency_code: "USD", value: toMoney(resolved.shipping) },
         } },
         items: resolved.lines.map((l) => ({
-          name: `${l.name} (${l.size})`,
+          name: `${l.name} (${l.color}, ${l.size})`,
           quantity: String(l.qty),
           unit_amount: { currency_code: "USD", value: toMoney(l.unitAmount) },
         })),
