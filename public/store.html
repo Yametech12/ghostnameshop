@@ -891,6 +891,12 @@ var NEWSLETTER_ACTION = "";
   .color-chip:hover,.size-chip:hover,.pv-atc:hover:not(:disabled),.thumb:hover{transform:none}
 }
 </style>
+  <style>
+  /* Motion audit fix: anchored sections clear the sticky header */
+  section[id]{scroll-margin-top:90px}
+  .footer-col a{transition:transform 200ms var(--ease);display:inline-block}
+  .footer-col a:hover{transform:translateX(4px)}
+  </style>
 </head>
 
 <body>
@@ -1645,7 +1651,7 @@ function openProduct(slug, e){
     const r = addBtn.getBoundingClientRect();
     const show = !entries[0].isIntersecting && r.top < 0 && !document.getElementById("cartDrawer").classList.contains("open");
     bar.classList.toggle("is-visible", show && MOBILE_Q.matches);
-  }, { threshold: 0 });
+  }, { threshold: 0 }, { rootMargin: "0px 0px -10% 0px" });
   stickyObserver.observe(addBtn);
 
   document.querySelector("#productView .pv-close").focus();
@@ -1837,7 +1843,7 @@ function bindLookTap(){
   const io = new IntersectionObserver(entries => {
     entries.forEach(en => {
       if (en.isIntersecting && !MOBILE_Q.matches) updateLookCounter(+en.target.dataset.idx);
-    });
+    }, { rootMargin: "0px 0px -10% 0px" });
   }, { threshold: 0.5 });
   track.querySelectorAll(".look").forEach(s => io.observe(s));
   /* Desktop clip-path image reveal */
@@ -1845,7 +1851,7 @@ function bindLookTap(){
     const rio = new IntersectionObserver(entries => {
       entries.forEach(en => {
         if (en.isIntersecting){ en.target.classList.add("is-inview"); rio.unobserve(en.target); }
-      });
+      }, { rootMargin: "0px 0px -10% 0px" });
     }, { threshold: 0.35 });
     track.querySelectorAll(".look").forEach(s => rio.observe(s));
   } else {
@@ -2003,7 +2009,7 @@ function initReveals(){
     return;
   }
   const io = new IntersectionObserver(entries => {
-    entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add("is-visible"); io.unobserve(en.target); } });
+    entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add("is-visible"); io.unobserve(en.target); } }, { rootMargin: "0px 0px -10% 0px" });
   }, { threshold: 0.15 });
   document.querySelectorAll(".reveal, .reveal-stagger").forEach(el => io.observe(el));
   requestAnimationFrame(() => requestAnimationFrame(() =>
