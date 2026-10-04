@@ -139,7 +139,7 @@ export default async function AdminPage() {
                       <span style={{ color: STATUS_COLORS[o.status] ?? "#8a8a90", fontWeight: 700, fontSize: 12 }}>{o.status}</span>
                     </td>
                     <td style={td}>
-                      {(o.resolved?.lines ?? []).map((l: { id: string; size: string; qty: number }) => `${l.id}(${l.size})×${l.qty}`).join(", ")}
+                      {(o.resolved?.lines ?? []).map((l: { id: string; size: string; color?: string; qty: number }) => `${l.id}(${l.color ?? "—"}, ${l.size})×${l.qty}`).join(", ")}
                     </td>
                     <td style={td}>{money(o.totals?.total ?? 0)}</td>
                     <td style={td}>
