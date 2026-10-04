@@ -1,15 +1,13 @@
 /**
  * Printify mapping — the bridge between storefront SKUs and Printify.
  *
- * HOW TO FILL THIS IN (one-time, ~10 minutes):
- *  1. In Printify, publish each product to your store. Copy its product id
- *     from the dashboard URL: printify.com/app/product/<PRODUCT_ID>/…
- *  2. For each storefront product, list the Printify variant ids:
- *       curl -H "Authorization: Bearer $PRINTIFY_API_TOKEN" \
- *         "https://api.printify.com/v1/products/<PRODUCT_ID>/variants.json"
- *  3. Put the ids below (size + color → variantId). Until a product is mapped
- *     here, checkout still works — the order is recorded as `manual_review`
- *     in the ledger instead of auto-fulfilled.
+ * Real product (Oct 2026): "GHOSTNAME® WORLDWIDE — Minimalist Boxy Tee"
+ * storefront id `gt-boxy-tee`, $39 base (+$3 for 2XL/3XL — see sizePriceAdjust
+ * in lib/catalog.ts). Bella+Canvas 3010 Unisex Oversized Boxy Tee via
+ * Printify Choice, in shop "My new store" (4053686).
+ *
+ * Until a product is mapped here, checkout still works — the order is
+ * recorded as `manual_review` in the ledger instead of auto-fulfilled.
  */
 
 export interface PrintifyVariant {
@@ -33,95 +31,48 @@ export interface PrintifyMapping {
 
 export const COLOR = "Black" as const;
 
+/** Colors offered for gt-boxy-tee (default first). */
+export const COLORS = ["Black", "White"] as const;
+
 export const PRINTIFY: Record<string, PrintifyMapping> = {
-  // ── Replace the placeholder ids with your real Printify ids ──
-  p1: {
-    productId: "PRINTIFY_PRODUCT_ID_FOR_PHANTOM_HOODIE",
-    blueprintId: 0,
-    printProviderId: 0,
-    variants: [
-      { size: "S", color: COLOR, variantId: 0, cost: 0 },
-      { size: "M", color: COLOR, variantId: 0, cost: 0 },
-      { size: "L", color: COLOR, variantId: 0, cost: 0 },
-      { size: "XL", color: COLOR, variantId: 0, cost: 0 },
-    ],
-  },
-  p2: {
-    productId: "6aba1e38855344491704d840", // Alien Mask Graphic Tee (White) — blueprint 5345, provider 99
-    blueprintId: 5345,
+  "gt-boxy-tee": {
+    productId: "6ac1bbf23ef7a1f2b70e60fa",
+    blueprintId: 1382,
     printProviderId: 99,
     variants: [
-      { size: "S", color: "White", variantId: 0, cost: 0 }, // enable + map when added in Printify
-      { size: "M", color: "White", variantId: 243987, cost: 20.51 },
-      { size: "L", color: "White", variantId: 0, cost: 0 },
-      { size: "XL", color: "White", variantId: 0, cost: 0 },
-    ],
-  },
-  p3: {
-    productId: "PRINTIFY_PRODUCT_ID_FOR_CARGO_PANTS",
-    variants: [
-      { size: "S", color: COLOR, variantId: 0, cost: 0 },
-      { size: "M", color: COLOR, variantId: 0, cost: 0 },
-      { size: "L", color: COLOR, variantId: 0, cost: 0 },
-      { size: "XL", color: COLOR, variantId: 0, cost: 0 },
-    ],
-  },
-  p4: {
-    productId: "PRINTIFY_PRODUCT_ID_FOR_BOMBER_JACKET",
-    variants: [
-      { size: "S", color: COLOR, variantId: 0, cost: 0 },
-      { size: "M", color: COLOR, variantId: 0, cost: 0 },
-      { size: "L", color: COLOR, variantId: 0, cost: 0 },
-      { size: "XL", color: COLOR, variantId: 0, cost: 0 },
-    ],
-  },
-  p5: {
-    productId: "PRINTIFY_PRODUCT_ID_FOR_KNIT_BEANIE",
-    variants: [{ size: "OS", color: COLOR, variantId: 0, cost: 0 }],
-  },
-  p6: {
-    productId: "PRINTIFY_PRODUCT_ID_FOR_ZIP_VEST",
-    variants: [
-      { size: "S", color: COLOR, variantId: 0, cost: 0 },
-      { size: "M", color: COLOR, variantId: 0, cost: 0 },
-      { size: "L", color: COLOR, variantId: 0, cost: 0 },
-      { size: "XL", color: COLOR, variantId: 0, cost: 0 },
-    ],
-  },
-  a1: {
-    productId: "PRINTIFY_PRODUCT_ID_FOR_SPECTRE_LONGSLEEVE",
-    variants: [
-      { size: "S", color: COLOR, variantId: 0, cost: 0 },
-      { size: "M", color: COLOR, variantId: 0, cost: 0 },
-      { size: "L", color: COLOR, variantId: 0, cost: 0 },
-      { size: "XL", color: COLOR, variantId: 0, cost: 0 },
-    ],
-  },
-  a2: {
-    productId: "PRINTIFY_PRODUCT_ID_FOR_MIRAGE_TRACKPANTS",
-    variants: [
-      { size: "S", color: COLOR, variantId: 0, cost: 0 },
-      { size: "M", color: COLOR, variantId: 0, cost: 0 },
-      { size: "L", color: COLOR, variantId: 0, cost: 0 },
-      { size: "XL", color: COLOR, variantId: 0, cost: 0 },
-    ],
-  },
-  a3: {
-    productId: "PRINTIFY_PRODUCT_ID_FOR_WRAITH_OVERSHIRT",
-    variants: [
-      { size: "S", color: COLOR, variantId: 0, cost: 0 },
-      { size: "M", color: COLOR, variantId: 0, cost: 0 },
-      { size: "L", color: COLOR, variantId: 0, cost: 0 },
-      { size: "XL", color: COLOR, variantId: 0, cost: 0 },
+      // Black — Bella+Canvas 3010
+      { size: "XS", color: "Black", variantId: 103517, cost: 18.58 },
+      { size: "S", color: "Black", variantId: 103518, cost: 18.58 },
+      { size: "M", color: "Black", variantId: 103519, cost: 18.58 },
+      { size: "L", color: "Black", variantId: 103520, cost: 18.58 },
+      { size: "XL", color: "Black", variantId: 103521, cost: 18.58 },
+      { size: "2XL", color: "Black", variantId: 103522, cost: 19.45 },
+      { size: "3XL", color: "Black", variantId: 103523, cost: 19.45 },
+      // White — Bella+Canvas 3010
+      { size: "XS", color: "White", variantId: 103545, cost: 18.58 },
+      { size: "S", color: "White", variantId: 103546, cost: 18.58 },
+      { size: "M", color: "White", variantId: 103547, cost: 18.58 },
+      { size: "L", color: "White", variantId: 103548, cost: 18.58 },
+      { size: "XL", color: "White", variantId: 103549, cost: 18.58 },
+      { size: "2XL", color: "White", variantId: 103550, cost: 19.45 },
+      { size: "3XL", color: "White", variantId: 103551, cost: 19.45 },
     ],
   },
 };
 
-/** Look up the Printify line for a storefront product + size. */
-export function printifyFor(id: string, size: string) {
+/**
+ * Look up the Printify line for a storefront product + size (+ optional color).
+ * Color defaults to Black because the current checkout cart carries only
+ * id/size/qty — pass the color through once the storefront sends it.
+ */
+export function printifyFor(id: string, size: string, color: string = COLOR) {
   const m = PRINTIFY[id];
   if (!m) return null;
-  const v = m.variants.find((x) => x.size === size) ?? null;
+  const want = color.trim().toLowerCase();
+  const v =
+    m.variants.find(
+      (x) => x.size === size && x.color.toLowerCase() === want
+    ) ?? null;
   if (!v) return null;
   const unmapped =
     m.productId.startsWith("PRINTIFY_PRODUCT_ID_FOR_") || v.variantId === 0;
