@@ -5,9 +5,24 @@
 import { toMoney } from "./pricing";
 import type { ResolvedCart } from "./types";
 
+const LIVE_BASE = "https://api-m.paypal.com";
 const BASE = process.env.PAYPAL_API_BASE || "https://api-m.sandbox.paypal.com";
 
+// Sandbox guard: in production the API base MUST be the live endpoint.
+// A sandbox base in production would create fake orders against real checkouts.
+if (process.env.NODE_ENV === "production" && BASE !== LIVE_BASE) {
+  throw new Error(
+    `PAYPAL_API_BASE must be the live endpoint (${LIVE_BASE}) in production — refusing to boot against ${BASE}`
+  );
+}
+
+/** Module-level OAuth token cache — honors PayPal's expires_in, refreshes 60s early. */
+let tokenCache: { token: string; expiresAt: number } | null = null;
+
 async function getAccessToken(): Promise<string> {
+  if (tokenCache && Date.now() < tokenCache.expiresAt - 60_000) {
+    return tokenCache.token;
+  }
   const id = process.env.PAYPAL_CLIENT_ID;
   const secret = process.env.PAYPAL_CLIENT_SECRET;
   if (!id || !secret) throw new Error("PayPal credentials missing (PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET)");
@@ -21,8 +36,13 @@ async function getAccessToken(): Promise<string> {
     body: "grant_type=client_credentials",
   });
   if (!res.ok) throw new Error(`PayPal OAuth failed: ${await res.text()}`);
-  const data = (await res.json()) as { access_token: string };
-  return data.access_token;
+  const data = (await res.json()) as { access_token: string; expires_in?: number };
+  if (typeof data.access_token !== "string" || !data.access_token) {
+    throw new Error("PayPal OAuth returned no access token");
+  }
+  const ttlSec = typeof data.expires_in === "number" && data.expires_in > 0 ? data.expires_in : 3600;
+  tokenCache = { token: data.access_token, expiresAt: Date.now() + ttlSec * 1000 };
+  return tokenCache.token;
 }
 
 async function paypalFetch(path: string, init: RequestInit): Promise<unknown> {
@@ -77,10 +97,14 @@ export async function createPayPalOrder(resolved: ResolvedCart, ledgerKey: strin
       cancel_url: `${appUrl}/checkout`,
     } } },
   };
-  return (await paypalFetch("/v2/checkout/orders", {
+  const result = (await paypalFetch("/v2/checkout/orders", {
     method: "POST",
     body: JSON.stringify(body),
-  })) as PayPalOrderResult;
+  })) as { id?: unknown; status?: unknown };
+  if (typeof result?.id !== "string" || !result.id) {
+    throw new Error("PayPal order creation returned no order id");
+  }
+  return { id: result.id, status: typeof result.status === "string" ? result.status : "" };
 }
 
 export interface PayPalCaptureResult {
@@ -88,6 +112,8 @@ export interface PayPalCaptureResult {
   status: string;
   payer?: { email_address?: string };
   purchase_units?: Array<{
+    /** Our ledger key — set as custom_id at order creation; binds order ↔ checkout. */
+    custom_id?: string;
     payments?: {
       captures?: Array<{ id: string; status: string; amount?: { value: string; currency_code: string } }>;
       authorizations?: Array<{ id: string; status: string }>;
@@ -112,8 +138,17 @@ export async function getPayPalOrder(orderId: string): Promise<PayPalCaptureResu
   return (await paypalFetch(`/v2/checkout/orders/${orderId}`, { method: "GET" })) as PayPalCaptureResult;
 }
 
-/** Verify a webhook really came from PayPal — never trust raw POSTs. */
-export async function verifyWebhook(headers: Headers, event: unknown): Promise<boolean> {
+/**
+ * Verify a webhook really came from PayPal — never trust raw POSTs.
+ *
+ * @param rawBody the RAW request body string, passed through untouched as
+ *   webhook_event. Re-serializing a parsed object can change byte-level
+ *   details and fail verification for legitimate webhooks.
+ * @throws when the verification API itself errors — the route must 500 so
+ *   PayPal retries the delivery.
+ * @returns false ONLY when PayPal explicitly reports verification_status !== "SUCCESS".
+ */
+export async function verifyWebhook(headers: Headers, rawBody: string): Promise<boolean> {
   const webhookId = process.env.PAYPAL_WEBHOOK_ID;
   if (!webhookId) throw new Error("PAYPAL_WEBHOOK_ID missing");
   const token = await getAccessToken();
@@ -127,10 +162,13 @@ export async function verifyWebhook(headers: Headers, event: unknown): Promise<b
       transmission_sig: headers.get("paypal-transmission-sig"),
       transmission_time: headers.get("paypal-transmission-time"),
       webhook_id: webhookId,
-      webhook_event: event,
+      webhook_event: rawBody,
     }),
   });
-  if (!res.ok) return false;
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`PayPal webhook verification API failed (${res.status}): ${text.slice(0, 200)}`);
+  }
   const data = (await res.json()) as { verification_status?: string };
   return data.verification_status === "SUCCESS";
 }
