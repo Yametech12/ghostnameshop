@@ -1,6 +1,6 @@
 /** Shared types for the GHOSTNAME storefront checkout + fulfillment pipeline. */
 
-export type SizeKey = "S" | "M" | "L" | "XL" | "OS";
+export type SizeKey = "XS" | "S" | "M" | "L" | "XL" | "2XL" | "3XL";
 
 /** What the browser sends: product id + size + quantity. */
 export interface CartLine {
