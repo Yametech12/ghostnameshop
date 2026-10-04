@@ -1,1 +1,101 @@
-LyoqCiAqIFByaW50aWZ5IG1hcHBpbmcgw6LCgMKUIHRoZSBicmlkZ2UgYmV0d2VlbiBzdG9yZWZyb250IFNLVXMgYW5kIFByaW50aWZ5LgogKgogKiBSZWFsIHByb2R1Y3QgKE9jdCAyMDI2KTogIkdIT1NUTkFNRcOCwq4gV09STERXSURFIMOiwoDClCBNaW5pbWFsaXN0IEJveHkgVGVlIgogKiBzdG9yZWZyb250IGlkIGBndC1ib3h5LXRlZWAsICQzOSBiYXNlICgrJDMgZm9yIDJYTC8zWEwgw6LCgMKUIHNlZSBzaXplUHJpY2VBZGp1c3QKICogaW4gbGliL2NhdGFsb2cudHMpLiBCZWxsYStDYW52YXMgMzAxMCBVbmlzZXggT3ZlcnNpemVkIEJveHkgVGVlIHZpYQogKiBQcmludGlmeSBDaG9pY2UsIGluIHNob3AgIk15IG5ldyBzdG9yZSIgKDQwNTM2ODYpLgogKgogKiBVbnRpbCBhIHByb2R1Y3QgaXMgbWFwcGVkIGhlcmUsIGNoZWNrb3V0IHN0aWxsIHdvcmtzIMOiwoDClCB0aGUgb3JkZXIgaXMKICogcmVjb3JkZWQgYXMgYG1hbnVhbF9yZXZpZXdgIGluIHRoZSBsZWRnZXIgaW5zdGVhZCBvZiBhdXRvLWZ1bGZpbGxlZC4KICovCgpleHBvcnQgaW50ZXJmYWNlIFByaW50aWZ5VmFyaWFudCB7CiAgc2l6ZTogc3RyaW5nOwogIGNvbG9yOiBzdHJpbmc7CiAgLyoqIE51bWVyaWMgdmFyaWFudCBpZCBmcm9tIHRoZSBQcmludGlmeSBjYXRhbG9nL3ZhcmlhbnRzIEFQSS4gKi8KICB2YXJpYW50SWQ6IG51bWJlcjsKICAvKiogWW91ciBwcm9kdWN0aW9uIGNvc3QgZm9yIG1hcmdpbiB0cmFja2luZyAoVVNEKS4gKi8KICBjb3N0OiBudW1iZXI7Cn0KCmV4cG9ydCBpbnRlcmZhY2UgUHJpbnRpZnlNYXBwaW5nIHsKICAvKiogUHJpbnRpZnkgcHJvZHVjdCBpZCAoZnJvbSB0aGUgZGFzaGJvYXJkIFVSTCkuICovCiAgcHJvZHVjdElkOiBzdHJpbmc7CiAgLyoqIEJsdWVwcmludCBpZCBmb3IgcmVmZXJlbmNlIChmcm9tIHRoZSBQcmludGlmeSBjYXRhbG9nKS4gKi8KICBibHVlcHJpbnRJZD86IG51bWJlcjsKICBwcmludFByb3ZpZGVySWQ/OiBudW1iZXI7CiAgLyoqIE9uZSB2YXJpYW50IHBlciBzaXplL2NvbG9yIGNvbWJpbmF0aW9uIHlvdSBzZWxsLiAqLwogIHZhcmlhbnRzOiBQcmludGlmeVZhcmlhbnRbXTsKfQoKLyoqIEBkZXByZWNhdGVkIERvIG5vdCB1c2UgYXMgYSBzaWxlbnQgZGVmYXVsdCDigJQgY29sb3IgbXVzdCBjb21lIGZyb20gdGhlIHZhbGlkYXRlZCBjYXJ0LiAqLwpleHBvcnQgY29uc3QgQ09MT1IgPSAiQmxhY2siIGFzIGNvbnN0OwoKLyoqIENvbG9ycyBvZmZlcmVkIGZvciBndC1ib3h5LXRlZSAoZGVmYXVsdCBmaXJzdCkuICovCmV4cG9ydCBjb25zdCBDT0xPUlMgPSBbIkJsYWNrIiwgIldoaXRlIl0gYXMgY29uc3Q7CgpleHBvcnQgY29uc3QgUFJJTlRJRlk6IFJlY29yZDxzdHJpbmcsIFByaW50aWZ5TWFwcGluZz4gPSB7CiAgImd0LWJveHktdGVlIjogewogICAgcHJvZHVjdElkOiAiNmFjMWJiZjIzZWY3YTFmMmI3MGU2MGZhIiwKICAgIGJsdWVwcmludElkOiAxMzgyLAogICAgcHJpbnRQcm92aWRlcklkOiA5OSwKICAgIHZhcmlhbnRzOiBbCiAgICAgIC8vIEJsYWNrIMOiwoDClCBCZWxsYStDYW52YXMgMzAxMAogICAgICB7IHNpemU6ICJYUyIsIGNvbG9yOiAiQmxhY2siLCB2YXJpYW50SWQ6IDEwMzUxNywgY29zdDogMTguNTggfSwKICAgICAgeyBzaXplOiAiUyIsIGNvbG9yOiAiQmxhY2siLCB2YXJpYW50SWQ6IDEwMzUxOCwgY29zdDogMTguNTggfSwKICAgICAgeyBzaXplOiAiTSIsIGNvbG9yOiAiQmxhY2siLCB2YXJpYW50SWQ6IDEwMzUxOSwgY29zdDogMTguNTggfSwKICAgICAgeyBzaXplOiAiTCIsIGNvbG9yOiAiQmxhY2siLCB2YXJpYW50SWQ6IDEwMzUyMCwgY29zdDogMTguNTggfSwKICAgICAgeyBzaXplOiAiWEwiLCBjb2xvcjogIkJsYWNrIiwgdmFyaWFudElkOiAxMDM1MjEsIGNvc3Q6IDE4LjU4IH0sCiAgICAgIHsgc2l6ZTogIjJYTCIsIGNvbG9yOiAiQmxhY2siLCB2YXJpYW50SWQ6IDEwMzUyMiwgY29zdDogMTkuNDUgfSwKICAgICAgeyBzaXplOiAiM1hMIiwgY29sb3I6ICJCbGFjayIsIHZhcmlhbnRJZDogMTAzNTIzLCBjb3N0OiAxOS40NSB9LAogICAgICAvLyBXaGl0ZSDDosKAwpQgQmVsbGErQ2FudmFzIDMwMTAKICAgICAgeyBzaXplOiAiWFMiLCBjb2xvcjogIldoaXRlIiwgdmFyaWFudElkOiAxMDM1NDUsIGNvc3Q6IDE4LjU4IH0sCiAgICAgIHsgc2l6ZTogIlMiLCBjb2xvcjogIldoaXRlIiwgdmFyaWFudElkOiAxMDM1NDYsIGNvc3Q6IDE4LjU4IH0sCiAgICAgIHsgc2l6ZTogIk0iLCBjb2xvcjogIldoaXRlIiwgdmFyaWFudElkOiAxMDM1NDcsIGNvc3Q6IDE4LjU4IH0sCiAgICAgIHsgc2l6ZTogIkwiLCBjb2xvcjogIldoaXRlIiwgdmFyaWFudElkOiAxMDM1NDgsIGNvc3Q6IDE4LjU4IH0sCiAgICAgIHsgc2l6ZTogIlhMIiwgY29sb3I6ICJXaGl0ZSIsIHZhcmlhbnRJZDogMTAzNTQ5LCBjb3N0OiAxOC41OCB9LAogICAgICB7IHNpemU6ICIyWEwiLCBjb2xvcjogIldoaXRlIiwgdmFyaWFudElkOiAxMDM1NTAsIGNvc3Q6IDE5LjQ1IH0sCiAgICAgIHsgc2l6ZTogIjNYTCIsIGNvbG9yOiAiV2hpdGUiLCB2YXJpYW50SWQ6IDEwMzU1MSwgY29zdDogMTkuNDUgfSwKICAgIF0sCiAgfSwKfTsKCi8qKgogKiBDb2xvcnMgYXZhaWxhYmxlIGZvciBhIHByb2R1Y3QgaWQgKGNhbm9uaWNhbCBjYXNpbmcsIGUuZy4gWyJCbGFjayIsICJXaGl0ZSJdKS4KICovCmV4cG9ydCBmdW5jdGlvbiBjb2xvcnNGb3IoaWQ6IHN0cmluZyk6IHJlYWRvbmx5IHN0cmluZ1tdIHsKICBjb25zdCBtID0gUFJJTlRJRllbaWRdOwogIGlmICghbSkgcmV0dXJuIFtdOwogIGNvbnN0IHNlZW4gPSBuZXcgU2V0PHN0cmluZz4oKTsKICBjb25zdCBvdXQ6IHN0cmluZ1tdID0gW107CiAgZm9yIChjb25zdCB2IG9mIG0udmFyaWFudHMpIHsKICAgIGlmICghc2Vlbi5oYXModi5jb2xvcikpIHsgc2Vlbi5hZGQodi5jb2xvcik7IG91dC5wdXNoKHYuY29sb3IpOyB9CiAgfQogIHJldHVybiBvdXQ7Cn0KCi8qKgogKiBMb29rIHVwIHRoZSBQcmludGlmeSBsaW5lIGZvciBhIHN0b3JlZnJvbnQgcHJvZHVjdCArIHNpemUgKyBjb2xvci4KICogQ1JJVElDQUw6IGNvbG9yIGlzIFJFUVVJUkVEIGFuZCBtdXN0IG1hdGNoIGEgdmFyaWFudCBleGFjdGx5IChjYXNlLWluc2Vuc2l0aXZlKS4KICogTmV2ZXIgc2lsZW50bHkgZGVmYXVsdCDigJQgYSB3cm9uZyBkZWZhdWx0IHNoaXBzIHRoZSB3cm9uZyBwcm9kdWN0LgogKi8KZXhwb3J0IGZ1bmN0aW9uIHByaW50aWZ5Rm9yKGlkOiBzdHJpbmcsIHNpemU6IHN0cmluZywgY29sb3I6IHN0cmluZykgewogIGNvbnN0IG0gPSBQUklOVElGWVtpZF07CiAgaWYgKCFtKSByZXR1cm4gbnVsbDsKICBjb25zdCB3YW50ID0gY29sb3IudHJpbSgpLnRvTG93ZXJDYXNlKCk7CiAgY29uc3QgdiA9CiAgICBtLnZhcmlhbnRzLmZpbmQoCiAgICAgICh4KSA9PiB4LnNpemUgPT09IHNpemUgJiYgeC5jb2xvci50b0xvd2VyQ2FzZSgpID09PSB3YW50CiAgICApID8/IG51bGw7CiAgaWYgKCF2KSByZXR1cm4gbnVsbDsKICBjb25zdCB1bm1hcHBlZCA9CiAgICBtLnByb2R1Y3RJZC5zdGFydHNXaXRoKCJQUklOVElGWV9QUk9EVUNUX0lEX0ZPUl8iKSB8fCB2LnZhcmlhbnRJZCA9PT0gMDsKICByZXR1cm4gewogICAgcHJvZHVjdElkOiBtLnByb2R1Y3RJZCwKICAgIHZhcmlhbnRJZDogdi52YXJpYW50SWQsCiAgICBza3U6IHVuZGVmaW5lZCwKICAgIHVubWFwcGVkLAogICAgY29zdDogdi5jb3N0LAogIH07Cn0K
+/**
+ * Printify mapping — the bridge between storefront SKUs and Printify.
+ *
+ * Real product (Oct 2026): "GHOSTNAMEÂ® WORLDWIDE — Minimalist Boxy Tee"
+ * storefront id `gt-boxy-tee`, $39 base (+$3 for 2XL/3XL — see sizePriceAdjust
+ * in lib/catalog.ts). Bella+Canvas 3010 Unisex Oversized Boxy Tee via
+ * Printify Choice, in shop "My new store" (4053686).
+ *
+ * Until a product is mapped here, checkout still works — the order is
+ * recorded as `manual_review` in the ledger instead of auto-fulfilled.
+ */
+
+export interface PrintifyVariant {
+  size: string;
+  color: string;
+  /** Numeric variant id from the Printify catalog/variants API. */
+  variantId: number;
+  /** Your production cost for margin tracking (USD). */
+  cost: number;
+}
+
+export interface PrintifyMapping {
+  /** Printify product id (from the dashboard URL). */
+  productId: string;
+  /** Blueprint id for reference (from the Printify catalog). */
+  blueprintId?: number;
+  printProviderId?: number;
+  /** One variant per size/color combination you sell. */
+  variants: PrintifyVariant[];
+}
+
+/** @deprecated Do not use as a silent default — color must come from the validated cart. */
+export const COLOR = "Black" as const;
+
+/** Colors offered for gt-boxy-tee (default first). */
+export const COLORS = ["Black", "White"] as const;
+
+export const PRINTIFY: Record<string, PrintifyMapping> = {
+  "gt-boxy-tee": {
+    productId: "6ac1bbf23ef7a1f2b70e60fa",
+    blueprintId: 1382,
+    printProviderId: 99,
+    variants: [
+      // Black — Bella+Canvas 3010
+      { size: "XS", color: "Black", variantId: 103517, cost: 18.58 },
+      { size: "S", color: "Black", variantId: 103518, cost: 18.58 },
+      { size: "M", color: "Black", variantId: 103519, cost: 18.58 },
+      { size: "L", color: "Black", variantId: 103520, cost: 18.58 },
+      { size: "XL", color: "Black", variantId: 103521, cost: 18.58 },
+      { size: "2XL", color: "Black", variantId: 103522, cost: 19.45 },
+      { size: "3XL", color: "Black", variantId: 103523, cost: 19.45 },
+      // White — Bella+Canvas 3010
+      { size: "XS", color: "White", variantId: 103545, cost: 18.58 },
+      { size: "S", color: "White", variantId: 103546, cost: 18.58 },
+      { size: "M", color: "White", variantId: 103547, cost: 18.58 },
+      { size: "L", color: "White", variantId: 103548, cost: 18.58 },
+      { size: "XL", color: "White", variantId: 103549, cost: 18.58 },
+      { size: "2XL", color: "White", variantId: 103550, cost: 19.45 },
+      { size: "3XL", color: "White", variantId: 103551, cost: 19.45 },
+    ],
+  },
+};
+
+/**
+ * Colors available for a product id (canonical casing, e.g. ["Black", "White"]).
+ */
+export function colorsFor(id: string): readonly string[] {
+  const m = PRINTIFY[id];
+  if (!m) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const v of m.variants) {
+    if (!seen.has(v.color)) { seen.add(v.color); out.push(v.color); }
+  }
+  return out;
+}
+
+/**
+ * Look up the Printify line for a storefront product + size + color.
+ * CRITICAL: color is REQUIRED and must match a variant exactly (case-insensitive).
+ * Never silently default — a wrong default ships the wrong product.
+ */
+export function printifyFor(id: string, size: string, color: string) {
+  const m = PRINTIFY[id];
+  if (!m) return null;
+  const want = color.trim().toLowerCase();
+  const v =
+    m.variants.find(
+      (x) => x.size === size && x.color.toLowerCase() === want
+    ) ?? null;
+  if (!v) return null;
+  const unmapped =
+    m.productId.startsWith("PRINTIFY_PRODUCT_ID_FOR_") || v.variantId === 0;
+  return {
+    productId: m.productId,
+    variantId: v.variantId,
+    sku: undefined,
+    unmapped,
+    cost: v.cost,
+  };
+}
