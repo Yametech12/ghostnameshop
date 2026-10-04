@@ -187,7 +187,9 @@ input{font-family:inherit}
 @media (pointer:fine){
   .cursor{display:block;position:fixed;top:0;left:0;z-index:var(--z-cursor);pointer-events:none;
     width:12px;height:12px;border-radius:50%;background:var(--accent);mix-blend-mode:difference;
-    transform:translate(-50%,-50%);transition:width 300ms var(--ease),height 300ms var(--ease),background-color 300ms}
+    transform:translate(-50%,-50%);opacity:0;
+    transition:width 300ms var(--ease),height 300ms var(--ease),background-color 300ms,opacity 250ms var(--ease)}
+  .cursor.is-on{opacity:1}
   .cursor .cursor-label{display:none;font-size:10px;font-weight:600;letter-spacing:0.3em;color:#0A0A0A}
   .cursor.is-view{width:88px;height:88px;background:var(--accent);mix-blend-mode:normal}
   .cursor.is-view .cursor-label{display:block;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
@@ -802,84 +804,6 @@ var NEWSLETTER_ACTION = "";
     document.head.appendChild(l);
 })();
 </script>
-
-<style>
-/* ============================================================
-   PREMIUM PRODUCT SECTION — redesign Oct 2026
-   Apple Store product page meets Kith: clean, spacious, premium.
-   Scoped to the Minimalist Boxy Tee product experience.
-   ============================================================ */
-
-/* --- Product view: generous premium spacing --- */
-.pv-info{padding:56px 40px 64px}
-@media(min-width:1024px){
-  .pv-info{padding:64px 56px}
-}
-
-/* --- Price: large, confident --- */
-.pv-price{margin-top:20px;font-size:clamp(28px,2.6vw,36px);font-weight:600;letter-spacing:-0.01em}
-.pv-shipnote{margin-top:10px}
-
-/* --- Size selector: clean, minimal, tactile --- */
-.size-chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
-.size-chip{height:56px;min-width:64px;padding:0 22px;font-size:15px;font-weight:600;
-  letter-spacing:0.04em;border:1.5px solid var(--border);border-radius:999px;
-  background:transparent;color:var(--text);cursor:pointer;
-  transition:background-color 200ms,color 200ms,border-color 200ms,transform 150ms,box-shadow 200ms}
-.size-chip:hover{border-color:var(--text);transform:translateY(-1px)}
-.size-chip:active{transform:scale(0.96)}
-.size-chip[aria-checked="true"]{background:var(--text);color:var(--bg);border-color:var(--text);
-  box-shadow:0 4px 14px rgba(0,0,0,0.18)}
-.size-chip:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-
-/* --- Color swatches: large, tactile, premium --- */
-.color-chips{display:flex;gap:16px;margin-top:14px}
-.color-chip{width:56px;height:56px;border-radius:50%;cursor:pointer;position:relative;
-  border:2px solid var(--border);
-  box-shadow:inset 0 2px 6px rgba(255,255,255,0.25),inset 0 -3px 8px rgba(0,0,0,0.28),0 2px 8px rgba(0,0,0,0.12);
-  transition:border-color 200ms,transform 180ms cubic-bezier(0.34,1.56,0.64,1),box-shadow 200ms}
-.color-chip:hover{transform:scale(1.1)}
-.color-chip:active{transform:scale(0.94)}
-.color-chip.active{border-color:var(--text);
-  box-shadow:inset 0 2px 6px rgba(255,255,255,0.25),inset 0 -3px 8px rgba(0,0,0,0.28),
-    0 0 0 3px var(--bg),0 0 0 5px var(--text),0 4px 16px rgba(0,0,0,0.2)}
-.color-chip:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
-.color-chip[data-color="Black"]{background:radial-gradient(circle at 32% 28%,#2b2b2b,#0a0a0a 72%)}
-.color-chip[data-color="White"]{background:radial-gradient(circle at 32% 28%,#ffffff,#e8e8e8 72%)}
-
-/* --- Add to cart: premium button with refined hover --- */
-.pv-atc{margin-top:28px;width:100%;height:68px;font-size:15px;font-weight:600;
-  letter-spacing:0.14em;border-radius:2px;cursor:pointer;
-  transition:transform 180ms cubic-bezier(0.34,1.56,0.64,1),box-shadow 220ms,filter 200ms}
-.pv-atc:hover:not(:disabled){transform:translateY(-2px);
-  box-shadow:0 10px 28px rgba(0,0,0,0.28);filter:brightness(1.06)}
-.pv-atc:active:not(:disabled){transform:translateY(0) scale(0.98);
-  box-shadow:0 4px 12px rgba(0,0,0,0.2)}
-.pv-atc:disabled{opacity:0.45;cursor:not-allowed}
-.pv-atc:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-
-/* --- Product description: refined typography --- */
-.pv-desc{margin-top:20px;font-size:17px;line-height:1.75;max-width:52ch}
-.pv-meta{margin-top:20px;font-size:13px;letter-spacing:0.06em;text-transform:uppercase}
-
-/* --- Featured section: premium presentation --- */
-.featured-info .h3{font-size:clamp(30px,3.2vw,44px);letter-spacing:-0.01em}
-.featured-specs{margin-top:22px;display:grid;gap:10px}
-.featured-specs li{font-size:15px;line-height:1.6}
-.featured-specs li::marker{color:var(--accent)}
-
-/* --- Gallery: premium frame --- */
-.gallery-wrap{border-radius:4px;overflow:hidden}
-.thumb{border-radius:4px;transition:transform 180ms,box-shadow 200ms}
-.thumb:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.16)}
-.thumb.active{box-shadow:0 0 0 2px var(--text)}
-
-/* --- Reduced motion: keep it calm --- */
-@media(prefers-reduced-motion:reduce){
-  .color-chip,.size-chip,.pv-atc,.thumb{transition:none}
-  .color-chip:hover,.size-chip:hover,.pv-atc:hover:not(:disabled),.thumb:hover{transform:none}
-}
-</style>
 </head>
 
 <body>
@@ -1010,11 +934,11 @@ var NEWSLETTER_ACTION = "";
     <div class="featured-info">
       <p class="eyebrow reveal">02 — FEATURED PIECE</p>
       <h3 class="h3 reveal">Minimalist Boxy Tee — $39</h3>
-      <p class="body-copy reveal">The essential tee. Cut boxy from heavyweight 100% ring-spun cotton — the Bella+Canvas 3010 — with the GHOSTNAME® WORLDWIDE chest print. Tokyo street spirit, worn worldwide. Nothing loud — the uniform underneath everything.</p>
+      <p class="body-copy reveal">The essential tee. Cut boxy from heavyweight 100% ring-spun cotton, with the GHOSTNAME® WORLDWIDE chest print. Nothing loud — the uniform underneath everything.</p>
       <ul class="featured-specs reveal">
-        <li>Blank: Bella+Canvas 3010, heavyweight 100% ring-spun cotton</li>
+        <li>Fabric: 100% ring-spun cotton, heavyweight</li>
         <li>Fit: boxy. Sizes XS–3XL (+$3 for 2XL–3XL)</li>
-        <li>GHOSTNAME® WORLDWIDE chest print · Black or White</li>
+        <li>GHOSTNAME® WORLDWIDE chest print</li>
       </ul>
       <a class="btn btn-dark reveal" href="#/product/gt-boxy-tee" onclick="openProduct('gt-boxy-tee',event)">VIEW PIECE <span aria-hidden="true">→</span></a>
     </div>
@@ -1166,7 +1090,7 @@ var NEWSLETTER_ACTION = "";
       <div class="accordion" id="pvAccordion">
         <div class="acc-item">
           <button class="acc-btn" aria-expanded="false" onclick="toggleAcc(this)"><span>DETAILS</span><span class="acc-icon" aria-hidden="true">+</span></button>
-          <div class="acc-panel"><p class="small">Bella+Canvas 3010 — heavyweight 100% ring-spun cotton, cut boxy. GHOSTNAME® WORLDWIDE chest print. Tokyo street spirit, worn worldwide.</p></div>
+          <div class="acc-panel"><p class="small">100% ring-spun cotton. Heavyweight boxy fit. GHOSTNAME® WORLDWIDE chest print.</p></div>
         </div>
         <div class="acc-item">
           <button class="acc-btn" aria-expanded="false" onclick="toggleAcc(this)"><span>SHIPPING</span><span class="acc-icon" aria-hidden="true">+</span></button>
@@ -1289,13 +1213,13 @@ const LOOKS = [
   { id:"gt-boxy-tee", slug:"gt-boxy-tee", look:"01",
     name:"GHOSTNAME® WORLDWIDE — Minimalist Boxy Tee",
     price:{ usd:39, eur:36, gbp:31, jpy:6123 },
-    desc:"Cut boxy from heavyweight 100% ring-spun cotton — the Bella+Canvas 3010. GHOSTNAME® WORLDWIDE chest print. Tokyo street spirit, worn worldwide.",
+    desc:"Heavyweight boxy fit. GHOSTNAME® WORLDWIDE chest print.",
     fabric:"100% ring-spun cotton",
     sizes:["XS","S","M","L","XL","2XL","3XL"], tag:"NEW", cat:"Tops",
     img:"assets/images/ghost-tee-black.webp",
     images:{ Black:"assets/images/ghost-tee-black.webp", White:"assets/images/ghost-tee-white.webp" },
     eyebrow:"GHOSTNAME® — ESSENTIALS",
-    note:"Bella+Canvas 3010 · 100% ring-spun cotton · Heavyweight boxy fit",
+    note:"100% ring-spun cotton. Boxy fit.",
     surcharge:"+$3 for 2XL–3XL" }
 ];
 /* Editorial-only treatments (meta description, alt text) apply solely to
@@ -2002,31 +1926,51 @@ function initLogoReveal(){
 /* ============================================================
    CUSTOM CURSOR (pointer:fine only)
    ============================================================ */
+/* Robust custom cursor: buttery-smooth rAF follow that never freezes mid-screen.
+   The dot fades out when idle or when the pointer leaves the window (instead of
+   freezing in place), and the expanded VIEW circle eases upward so it never
+   covers the headline text beneath the pointer. */
+let __cursorInit = false;
 function initCursor(){
-  if (!FINE_POINTER || REDUCED) return;
+  if (__cursorInit || !FINE_POINTER || REDUCED) return;
+  __cursorInit = true;
   const dot = document.getElementById("cursor");
   const label = document.getElementById("cursorLabel");
+  if (!dot) return;
   let x = -100, y = -100, tx = -100, ty = -100;
-  let idleTimer = 0, cursorActive = true;
-  document.addEventListener("mousemove", e => {
-    tx = e.clientX; ty = e.clientY;
-    if (!cursorActive){ cursorActive = true; requestAnimationFrame(loop); }
+  let oy = 0, toy = 0; /* eased vertical offset for VIEW mode */
+  let idleTimer = 0, shown = false;
+  const show = () => { if (!shown){ shown = true; dot.classList.add("is-on"); } };
+  const hide = () => { if (shown){ shown = false; dot.classList.remove("is-on"); } clearTimeout(idleTimer); };
+  const poke = (cx, cy) => {
+    if (typeof cx !== "number" || typeof cy !== "number") return;
+    tx = cx; ty = cy; show();
     clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => { cursorActive = false; }, 2000);
-  }, { passive:true });
+    idleTimer = setTimeout(hide, 2200);
+  };
+  document.addEventListener("mousemove", e => poke(e.clientX, e.clientY), { passive:true });
+  document.documentElement.addEventListener("mouseleave", hide);
+  document.documentElement.addEventListener("mouseenter", e => poke(e.clientX, e.clientY));
+  window.addEventListener("blur", hide);
+  window.addEventListener("focus", show);
   (function loop(){
-    if (!cursorActive) return;
-    x += (tx - x) * 0.18; y += (ty - y) * 0.18;
-    dot.style.transform = `translate(${x}px, ${y}px) translate(-50%,-50%)`;
+    /* loop never stops — visibility is opacity-only, so the dot can never freeze */
+    x += (tx - x) * 0.2; y += (ty - y) * 0.2;
+    toy = dot.classList.contains("is-view") ? -64 : 0;
+    oy += (toy - oy) * 0.2;
+    dot.style.transform = `translate(${x.toFixed(1)}px, ${(y + oy).toFixed(1)}px) translate(-50%,-50%)`;
     requestAnimationFrame(loop);
   })();
-  document.addEventListener("mouseover", e => {
-    const zone = e.target.closest(".look-hover-zone");
+  const setZone = el => {
+    const zone = el && el.closest ? el.closest(".look-hover-zone") : null;
     if (zone){
-      label.textContent = zone.dataset.cursor || "VIEW";
+      if (label) label.textContent = zone.dataset.cursor || "VIEW";
       dot.classList.add("is-view");
     } else dot.classList.remove("is-view");
-  }, { passive:true });
+  };
+  document.addEventListener("mouseover", e => setZone(e.target), { passive:true });
+  /* re-evaluate when focus moves (e.g. modal opens under a stationary pointer) */
+  document.addEventListener("focusin", e => setZone(e.target));
 }
 
 /* ============================================================
