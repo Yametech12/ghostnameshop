@@ -16,18 +16,61 @@ if (process.env.NODE_ENV === "production" && BASE !== LIVE_BASE) {
   );
 }
 
+/** Hard timeout per PayPal HTTP call — a hung PayPal must never hang our route. */
+const FETCH_TIMEOUT_MS = 15_000;
+/** Transient-failure retries: network errors and HTTP 5xx only, exponential backoff. */
+const RETRY_MAX_ATTEMPTS = 3;
+const RETRY_BASE_DELAY_MS = 500;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * fetch with a hard timeout and retry on transient failures.
+ * Retries network errors/timeouts and HTTP 5xx (max 3 attempts, backoff
+ * 500ms → 1s → 2s). Never retries 4xx — those are caller/validation errors.
+ * Safe for capture POSTs: PayPal capture is idempotent per order (a retried
+ * capture returns the existing capture state or ORDER_ALREADY_CAPTURED),
+ * so retries cannot double-charge.
+ */
+async function fetchWithRetry(url: string, init: RequestInit): Promise<Response> {
+  let lastErr: unknown = null;
+  for (let attempt = 1; attempt <= RETRY_MAX_ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(url, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+      if (res.status >= 500 && attempt < RETRY_MAX_ATTEMPTS) {
+        await sleep(RETRY_BASE_DELAY_MS * 2 ** (attempt - 1));
+        continue;
+      }
+      return res;
+    } catch (err) {
+      lastErr = err;
+      if (attempt < RETRY_MAX_ATTEMPTS) {
+        await sleep(RETRY_BASE_DELAY_MS * 2 ** (attempt - 1));
+      }
+    }
+  }
+  throw lastErr instanceof Error
+    ? lastErr
+    : new Error(`PayPal request failed after ${RETRY_MAX_ATTEMPTS} attempts: ${String(lastErr)}`);
+}
+
 /** Module-level OAuth token cache — honors PayPal's expires_in, refreshes 60s early. */
 let tokenCache: { token: string; expiresAt: number } | null = null;
+/** In-flight token fetch — concurrent callers await the same promise (no thundering herd). */
+let tokenInFlight: Promise<string> | null = null;
 
-async function getAccessToken(): Promise<string> {
-  if (tokenCache && Date.now() < tokenCache.expiresAt - 60_000) {
-    return tokenCache.token;
-  }
+function clearTokenCache(): void {
+  tokenCache = null;
+}
+
+async function fetchNewToken(): Promise<string> {
   const id = process.env.PAYPAL_CLIENT_ID;
   const secret = process.env.PAYPAL_CLIENT_SECRET;
   if (!id || !secret) throw new Error("PayPal credentials missing (PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET)");
   const auth = Buffer.from(`${id}:${secret}`).toString("base64");
-  const res = await fetch(`${BASE}/v1/oauth2/token`, {
+  const res = await fetchWithRetry(`${BASE}/v1/oauth2/token`, {
     method: "POST",
     headers: {
       Authorization: `Basic ${auth}`,
@@ -45,12 +88,29 @@ async function getAccessToken(): Promise<string> {
   return tokenCache.token;
 }
 
-async function paypalFetch(path: string, init: RequestInit): Promise<unknown> {
+async function getAccessToken(): Promise<string> {
+  if (tokenCache && Date.now() < tokenCache.expiresAt - 60_000) {
+    return tokenCache.token;
+  }
+  if (!tokenInFlight) {
+    tokenInFlight = fetchNewToken().finally(() => {
+      tokenInFlight = null;
+    });
+  }
+  return tokenInFlight;
+}
+
+async function paypalFetch(path: string, init: RequestInit, retryOn401 = true): Promise<unknown> {
   const token = await getAccessToken();
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await fetchWithRetry(`${BASE}${path}`, {
     ...init,
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", ...(init.headers || {}) },
   });
+  // One 401 retry with a fresh token — the cached token may have been revoked.
+  if (res.status === 401 && retryOn401) {
+    clearTokenCache();
+    return paypalFetch(path, init, false);
+  }
   const text = await res.text();
   let body: unknown = null;
   try { body = text ? JSON.parse(text) : null; } catch { body = text; }
@@ -77,7 +137,7 @@ export async function createPayPalOrder(resolved: ResolvedCart, ledgerKey: strin
       {
         reference_id: "default",
         custom_id: ledgerKey,
-        description: "GHOSTNAME WORLDWIDE — Minimalist Boxy Tee",
+        description: "GHOSTNAME WORLDWIDE \u2014 Minimalist Boxy Tee",
         amount: { currency_code: "USD", value: toMoney(resolved.total), breakdown: {
           item_total: { currency_code: "USD", value: toMoney(resolved.subtotal) },
           shipping: { currency_code: "USD", value: toMoney(resolved.shipping) },
@@ -151,10 +211,9 @@ export async function getPayPalOrder(orderId: string): Promise<PayPalCaptureResu
 export async function verifyWebhook(headers: Headers, rawBody: string): Promise<boolean> {
   const webhookId = process.env.PAYPAL_WEBHOOK_ID;
   if (!webhookId) throw new Error("PAYPAL_WEBHOOK_ID missing");
-  const token = await getAccessToken();
-  const res = await fetch(`${BASE}/v1/notifications/verify-webhook-signature`, {
+  const res = await fetchWithRetry(`${BASE}/v1/notifications/verify-webhook-signature`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${await getAccessToken()}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       auth_algo: headers.get("paypal-auth-algo"),
       cert_url: headers.get("paypal-cert-url"),

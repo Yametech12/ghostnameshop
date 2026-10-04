@@ -113,6 +113,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Payment amount mismatch — our team will review this order." }, { status: 409 });
   }
 
+  // Gate on capture completion: only a COMPLETED capture may proceed to
+  // fulfillment. A PENDING/DECLINED/failed capture must never create a
+  // Printify order. The record stays "paid" so a later completed capture
+  // (retry or webhook) can still fulfill it.
+  if (cap.status !== "COMPLETED") {
+    console.error("[capture-order] capture not completed", orderId, cap.status);
+    try {
+      await recordPaid(ledgerKey, {
+        orderId,
+        captureId: cap.id,
+        amount: cap.amount?.value,
+        currency: cap.amount?.currency_code,
+        status: cap.status,
+        payerEmail: capture.payer?.email_address,
+      });
+    } catch (err) {
+      console.error("[capture-order] ledger write failed", shortKey(ledgerKey), err);
+      return NextResponse.json({ error: "Store ledger unavailable — try again shortly." }, { status: 503 });
+    }
+    return NextResponse.json({ error: "Payment not completed yet — please try again in a moment." }, { status: 409 });
+  }
+
   try {
     rec = (await recordPaid(ledgerKey, {
       orderId,
