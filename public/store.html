@@ -1315,6 +1315,7 @@ function saveCart(){ try { localStorage.setItem("gn_cart", JSON.stringify(cart))
 function cartCountTotal(){ return cart.reduce((s,c) => s + c.qty, 0); }
 
 function addToCart(id, qty, size, color){
+  if (!Number.isInteger(qty) || qty < 1){ toast("Something went wrong. Please try again."); return; }
   const p = findProduct(id);
   if (!p) { toast("Something went wrong. Please try again."); return; }
   if (!size){ toast("Please select a size."); return; }
@@ -1593,13 +1594,13 @@ function requireColor(){
 function requireSize(){
   if (pvSize) return true;
   const bar = document.getElementById("stickyAtc");
-  if (MOBILE_Q.matches && bar.classList.contains("is-visible")){
+  if (MOBILE_Q.matches && bar && bar.classList.contains("is-visible")){
     bar.classList.remove("shake"); void bar.offsetWidth; bar.classList.add("shake");
   }
   const label = document.getElementById("sizeLabel");
-  label.classList.add("flash");
-  setTimeout(() => label.classList.remove("flash"), 600);
-  document.getElementById("pvSizes").scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block:"center" });
+  if (label){ label.classList.add("flash"); setTimeout(() => label.classList.remove("flash"), 600); }
+  const sizes = document.getElementById("pvSizes");
+  if (sizes) sizes.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block:"center" });
   toast("Please select a size.");
   return false;
 }
@@ -1969,8 +1970,8 @@ function initNewsletter(){
     err.textContent = "";
     input.removeAttribute("aria-invalid");
     if (!window.NEWSLETTER_ACTION){
-      form.outerHTML = '<p class="news-success">You are on the list. Watch your inbox.</p>';
-      toast("You are on the list. Watch your inbox.");
+      form.outerHTML = '<p class="news-success">Newsletter coming soon. Stay tuned.</p>';
+      toast("Newsletter coming soon. Stay tuned.");
       return;
     }
     form.action = window.NEWSLETTER_ACTION;
@@ -2104,8 +2105,8 @@ function initMagnetic(){
   /* Commerce catalog: /api/products live, products.json fallback.
      Editorial LOOKS merge in so cart/search/product views resolve. */
   try {
-    const res = await fetch("/api/products").catch(() => null);
-    const live = res && res.ok ? await res.json() : await (await fetch("products.json")).json();
+    const res = await fetch("/api/products", { signal: AbortSignal.timeout(10000) }).catch(() => null);
+    const live = res && res.ok ? await res.json() : await (await fetch("products.json", { signal: AbortSignal.timeout(10000) })).json();
     ALL = Array.isArray(live) ? live : [];
   } catch(err){
     console.error("catalog failed to load", err);
