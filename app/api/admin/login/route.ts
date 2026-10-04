@@ -6,6 +6,7 @@ import {
   cookieValue,
   verifyAdminKey,
 } from "@/lib/admin-auth";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -14,6 +15,17 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: "Admin dashboard not configured — set ADMIN_DASHBOARD_KEY in the environment." },
       { status: 503 }
+    );
+  }
+
+  // Brute-force protection on BOTH login paths (JSON + HTML form).
+  const ip = clientIp(request);
+  const rl = await rateLimit("admin/login", ip, 10, 15 * 60);
+  if (!rl.ok) {
+    console.warn("[admin/login] rate limited", ip);
+    return NextResponse.json(
+      { error: "Too many login attempts — try again later." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
     );
   }
 
@@ -31,18 +43,24 @@ export async function POST(request: Request) {
   } else {
     // HTML form post (urlencoded)
     isForm = true;
-    const form = await request.formData();
+    let form: FormData;
+    try {
+      form = await request.formData();
+    } catch {
+      return NextResponse.json({ error: "Invalid form body" }, { status: 400 });
+    }
     key = (form.get("key") as string | null) ?? null;
   }
 
   if (!verifyAdminKey(key)) {
+    console.warn("[admin/login] failed attempt", ip);
     if (isForm) {
       return NextResponse.redirect(new URL("/admin/login?error=1", request.url), 303);
     }
-    // Small delay to slow brute-force attempts (JSON path only).
-    await new Promise((r) => setTimeout(r, 400));
     return NextResponse.json({ error: "Invalid admin key" }, { status: 401 });
   }
+
+  console.log("[admin/login] success", new Date().toISOString(), ip);
 
   const res = isForm
     ? NextResponse.redirect(new URL("/admin", request.url), 303)
