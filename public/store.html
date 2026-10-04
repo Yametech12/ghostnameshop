@@ -139,6 +139,12 @@ input{font-family:inherit}
 .text-link:hover::after{transform:scaleX(1)}
 .text-link .arr{font-size:16px;line-height:1}
 @media (max-width:767px){.btn{width:100%}}
+/* Mobile hero: hide the background placeholder's centered label. On small screens
+   the large wrapped headline reaches the hero's vertical center where .ph-label
+   sits, and its z-index paints it above the headline — causing the duplicated
+   "FW26 — FIRST DELIVERY" overlap. The real eyebrow (.hero-eyebrow) above the
+   headline remains the single instance. Desktop rendering unchanged. */
+@media (max-width:767px){.hero .placeholder .ph-label{display:none}}
 
 /* ---- Placeholder component (CSS/SVG only — no external images) ---- */
 .placeholder{position:relative;background:#171717;overflow:hidden;display:flex;align-items:center;justify-content:center}
