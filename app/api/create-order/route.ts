@@ -1,1 +1,122 @@
-aW1wb3J0IHsgTmV4dFJlc3BvbnNlIH0gZnJvbSAibmV4dC9zZXJ2ZXIiOwppbXBvcnQgeyByZXNvbHZlQ2FydCB9IGZyb20gIkAvbGliL2NhdGFsb2ciOwppbXBvcnQgeyBjcmVhdGVQYXlQYWxPcmRlciB9IGZyb20gIkAvbGliL3BheXBhbCI7CmltcG9ydCB7IG5ld0xlZGdlcktleSwgcmVjb3JkQ3JlYXRlZCwgc2hvcnRLZXkgfSBmcm9tICJAL2xpYi9sZWRnZXIiOwppbXBvcnQgeyBlc3RpbWF0ZU1hcmdpbiwgcm91bmQyIH0gZnJvbSAiQC9saWIvcHJpY2luZyI7CmltcG9ydCB7IGNsaWVudElwLCByYXRlTGltaXQgfSBmcm9tICJAL2xpYi9yYXRlLWxpbWl0IjsKaW1wb3J0IHsgcmVkaXMgfSBmcm9tICJAL2xpYi9hZG1pbi1kYXRhIjsKaW1wb3J0IHR5cGUgeyBDYXJ0TGluZSB9IGZyb20gIkAvbGliL3R5cGVzIjsKCmV4cG9ydCBjb25zdCBydW50aW1lID0gIm5vZGVqcyI7Cgpjb25zdCBJREVNX1BSRUZJWCA9ICJnbjppZGVtOiI7CmNvbnN0IElERU1fUkVTUF9QUkVGSVggPSAiZ246aWRlbS1yZXNwOiI7CmNvbnN0IElERU1fVFRMID0gODY0MDA7IC8vIDI0aCDDosKAwpQgbWF0Y2hlcyBQYXlQYWwncyBvcmRlciBhcHByb3ZhbCB3aW5kb3cKCmZ1bmN0aW9uIHBhcnNlTGluZXMoaW5wdXQ6IHVua25vd24pOiBDYXJ0TGluZVtdIHwgbnVsbCB7CiAgaWYgKCFBcnJheS5pc0FycmF5KGlucHV0KSB8fCBpbnB1dC5sZW5ndGggPT09IDAgfHwgaW5wdXQubGVuZ3RoID4gMTApIHJldHVybiBudWxsOwogIGNvbnN0IGxpbmVzOiBDYXJ0TGluZVtdID0gW107CiAgZm9yIChjb25zdCByYXcgb2YgaW5wdXQpIHsKICAgIGlmICh0eXBlb2YgcmF3ICE9PSAib2JqZWN0IiB8fCByYXcgPT09IG51bGwpIHJldHVybiBudWxsOwogICAgY29uc3QgeyBpZCwgc2l6ZSwgY29sb3IsIHF0eSB9ID0gcmF3IGFzIFJlY29yZDxzdHJpbmcsIHVua25vd24+OwogICAgaWYgKHR5cGVvZiBpZCAhPT0gInN0cmluZyIgfHwgIS9eKFtwYV1cZCt8Z3QtW2EtejAtOS1dKykkLy50ZXN0KGlkKSkgcmV0dXJuIG51bGw7CiAgICBpZiAodHlwZW9mIHNpemUgIT09ICJzdHJpbmciIHx8ICEvXihYU3xTfE18THxYTHwyWEx8M1hMKSQvLnRlc3Qoc2l6ZSkpIHJldHVybiBudWxsOwogICAgLy8gQ1JJVElDQUwgKDUwMHggYXVkaXQpOiBjb2xvciBpcyByZXF1aXJlZCDigJQgbmV2ZXIgc2lsZW50bHkgZGVmYXVsdC4KICAgIC8vIE11c3QgYmUgYSBzYW5lIHN0cmluZzsgY2F0YWxvZy5yZXNvbHZlQ2FydCB2YWxpZGF0ZXMgYWdhaW5zdCBhY3R1YWwgdmFyaWFudHMuCiAgICBpZiAodHlwZW9mIGNvbG9yICE9PSAic3RyaW5nIiB8fCAhL15bQS1aYS16IF17MSwyMH0kLy50ZXN0KGNvbG9yLnRyaW0oKSkpIHJldHVybiBudWxsOwogICAgY29uc3QgcSA9IE1hdGguZmxvb3IoTnVtYmVyKHF0eSkpOwogICAgaWYgKCFOdW1iZXIuaXNGaW5pdGUocSkgfHwgcSA8IDEgfHwgcSA+IDEwKSByZXR1cm4gbnVsbDsKICAgIGxpbmVzLnB1c2goeyBpZCwgc2l6ZSwgY29sb3I6IGNvbG9yLnRyaW0oKSwgcXR5OiBxIH0pOwogIH0KICByZXR1cm4gbGluZXM7Cn0KCi8qKiBDbGllbnQtc3VwcGxpZWQgaWRlbXBvdGVuY3kga2V5IChoZWFkZXIgcHJlZmVycmVkLCBib2R5IGZhbGxiYWNrKSwgc2FuaXRpemVkLiAqLwpmdW5jdGlvbiBpZGVtcG90ZW5jeUtleShyZXF1ZXN0OiBSZXF1ZXN0LCBib2R5OiB1bmtub3duKTogc3RyaW5nIHwgbnVsbCB7CiAgY29uc3QgcmF3ID0KICAgIHJlcXVlc3QuaGVhZGVycy5nZXQoImlkZW1wb3RlbmN5LWtleSIpPy50cmltKCkgfHwKICAgICh0eXBlb2YgYm9keSA9PT0gIm9iamVjdCIgJiYgYm9keSAhPT0gbnVsbAogICAgICA/IFN0cmluZygoYm9keSBhcyB7IGlkZW1wb3RlbmN5S2V5PzogdW5rbm93biB9KS5pZGVtcG90ZW5jeUtleSA/PyAiIikudHJpbSgpCiAgICAgIDogIiIpOwogIHJldHVybiAvXltBLVphLXowLTlfLV17OCwxMjh9JC8udGVzdChyYXcpID8gcmF3IDogbnVsbDsKfQoKZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIFBPU1QocmVxdWVzdDogUmVxdWVzdCkgewogIGNvbnN0IGlwID0gY2xpZW50SXAocmVxdWVzdCk7CiAgY29uc3QgcmwgPSBhd2FpdCByYXRlTGltaXQoImNyZWF0ZS1vcmRlciIsIGlwLCAyMCwgMzYwMCk7CiAgaWYgKCFybC5vaykgewogICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKAogICAgICB7IGVycm9yOiAiVG9vIG1hbnkgY2hlY2tvdXQgYXR0ZW1wdHMgw6LCgMKUIHRyeSBhZ2FpbiBsYXRlci4iIH0sCiAgICAgIHsgc3RhdHVzOiA0MjksIGhlYWRlcnM6IHsgIlJldHJ5LUFmdGVyIjogU3RyaW5nKHJsLnJldHJ5QWZ0ZXIpIH0gfQogICAgKTsKICB9CgogIGxldCBib2R5OiB1bmtub3duOwogIHRyeSB7CiAgICBib2R5ID0gYXdhaXQgcmVxdWVzdC5qc29uKCk7CiAgfSBjYXRjaCB7CiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIkludmFsaWQgSlNPTiBib2R5IiB9LCB7IHN0YXR1czogNDAwIH0pOwogIH0KICBpZiAoIWJvZHkgfHwgdHlwZW9mIGJvZHkgIT09ICJvYmplY3QiKSB7CiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIk1pc3NpbmcgcmVxdWVzdCBib2R5IiB9LCB7IHN0YXR1czogNDAwIH0pOwogIH0KCiAgY29uc3QgbGluZXMgPSBwYXJzZUxpbmVzKChib2R5IGFzIHsgaXRlbXM/OiB1bmtub3duIH0pLml0ZW1zKTsKICBpZiAoIWxpbmVzKSB7CiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIkludmFsaWQgY2FydCBsaW5lcyIgfSwgeyBzdGF0dXM6IDQwMCB9KTsKICB9CgogIC8vIElkZW1wb3RlbmN5OiBhIHJldHJpZWQgcmVxdWVzdCByZXBsYXlzIHRoZSBzdG9yZWQgcmVzcG9uc2UgaW5zdGVhZCBvZgogIC8vIGNyZWF0aW5nIGEgc2Vjb25kIFBheVBhbCBvcmRlci4KICBjb25zdCBpZGVtID0gaWRlbXBvdGVuY3lLZXkocmVxdWVzdCwgYm9keSk7CiAgaWYgKGlkZW0pIHsKICAgIHRyeSB7CiAgICAgIGNvbnN0IGNsYWltZWQgPSBhd2FpdCByZWRpcygpLnNldChgJHtJREVNX1BSRUZJWH0ke2lkZW19YCwgInByb2Nlc3NpbmciLCB7CiAgICAgICAgbng6IHRydWUsCiAgICAgICAgZXg6IElERU1fVFRMLAogICAgICB9KTsKICAgICAgaWYgKCFjbGFpbWVkKSB7CiAgICAgICAgY29uc3Qgc3RvcmVkID0gYXdhaXQgcmVkaXMoKS5nZXQoYCR7SURFTV9SRVNQX1BSRUZJWH0ke2lkZW19YCk7CiAgICAgICAgaWYgKHN0b3JlZCkgewogICAgICAgICAgY29uc3QgcGF5bG9hZCA9IHR5cGVvZiBzdG9yZWQgPT09ICJzdHJpbmciID8gSlNPTi5wYXJzZShzdG9yZWQpIDogc3RvcmVkOwogICAgICAgICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHBheWxvYWQsIHsgc3RhdHVzOiAyMDAgfSk7CiAgICAgICAgfQogICAgICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbigKICAgICAgICAgIHsgZXJyb3I6ICJEdXBsaWNhdGUgcmVxdWVzdCBhbHJlYWR5IGluIHByb2dyZXNzIiB9LAogICAgICAgICAgeyBzdGF0dXM6IDQwOSB9CiAgICAgICAgKTsKICAgICAgfQogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIGNvbnNvbGUud2FybigiW2NyZWF0ZS1vcmRlcl0gaWRlbXBvdGVuY3kgY2hlY2sgdW5hdmFpbGFibGUsIHByb2NlZWRpbmciLCBzaG9ydEtleShTdHJpbmcoaWRlbSkpLCBlcnIpOwogICAgfQogIH0KICBjb25zdCByZWxlYXNlSWRlbSA9IGFzeW5jICgpID0+IHsKICAgIGlmIChpZGVtKSBhd2FpdCByZWRpcygpLmRlbChgJHtJREVNX1BSRUZJWH0ke2lkZW19YCkuY2F0Y2goKCkgPT4ge30pOwogIH07CgogIGxldCByZXNvbHZlZDsKICB0cnkgewogICAgcmVzb2x2ZWQgPSBhd2FpdCByZXNvbHZlQ2FydChsaW5lcyk7CiAgfSBjYXRjaCAoZXJyKSB7CiAgICBhd2FpdCByZWxlYXNlSWRlbSgpOwogICAgY29uc3QgZGV0YWlsID0gZXJyIGluc3RhbmNlb2YgRXJyb3IgPyBlcnIubWVzc2FnZSA6IFN0cmluZyhlcnIpOwogICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHsgZXJyb3I6IGRldGFpbCB8fCAiSW52YWxpZCBjYXJ0IiB9LCB7IHN0YXR1czogNDAwIH0pOwogIH0KICBpZiAocmVzb2x2ZWQubGluZXMubGVuZ3RoID09PSAwIHx8IHJlc29sdmVkLnRvdGFsIDw9IDApIHsKICAgIGF3YWl0IHJlbGVhc2VJZGVtKCk7CiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLmpzb24oeyBlcnJvcjogIkNhcnQgaXMgZW1wdHkgb3IgdW5wdXJjaGFzYWJsZSIgfSwgeyBzdGF0dXM6IDQwMCB9KTsKICB9CgogIGNvbnN0IGxlZGdlcktleSA9IG5ld0xlZGdlcktleSgpOwogIHRyeSB7CiAgICBhd2FpdCByZWNvcmRDcmVhdGVkKHsga2V5OiBsZWRnZXJLZXksIGxpbmVzLCByZXNvbHZlZCB9KTsKICB9IGNhdGNoIChlcnIpIHsKICAgIGF3YWl0IHJlbGVhc2VJZGVtKCk7CiAgICBjb25zb2xlLmVycm9yKCJbY3JlYXRlLW9yZGVyXSBsZWRnZXIgd3JpdGUgZmFpbGVkIiwgZXJyKTsKICAgIHJldHVybiBOZXh0UmVzcG9uc2UuanNvbih7IGVycm9yOiAiU3RvcmUgbGVkZ2VyIHVuYXZhaWxhYmxlIMOiwoDClCB0cnkgYWdhaW4gc2hvcnRseS4iIH0sIHsgc3RhdHVzOiA1MDMgfSk7CiAgfQoKICB0cnkgewogICAgY29uc3Qgb3JkZXIgPSBhd2FpdCBjcmVhdGVQYXlQYWxPcmRlcihyZXNvbHZlZCwgbGVkZ2VyS2V5KTsKICAgIGNvbnN0IG1hcmdpbiA9IGVzdGltYXRlTWFyZ2luKHJlc29sdmVkKTsKICAgIGNvbnNvbGUubG9nKCJbY3JlYXRlLW9yZGVyXSIsIHNob3J0S2V5KGxlZGdlcktleSksICJ0b3RhbCIsIHJlc29sdmVkLnRvdGFsLCAibWFyZ2luIiwgbWFyZ2luLm1hcmdpbik7CiAgICBjb25zdCBwYXlsb2FkID0gewogICAgICBvcmRlcklkOiBvcmRlci5pZCwKICAgICAgbGVkZ2VyS2V5LAogICAgICB0b3RhbHM6IHsKICAgICAgICBzdWJ0b3RhbDogcm91bmQyKHJlc29sdmVkLnN1YnRvdGFsKSwKICAgICAgICBzaGlwcGluZzogcmVzb2x2ZWQuc2hpcHBpbmcsCiAgICAgICAgdG90YWw6IHJlc29sdmVkLnRvdGFsLAogICAgICB9LAogICAgICBsaW5lczogcmVzb2x2ZWQubGluZXMubWFwKChsKSA9PiAoewogICAgICAgIGlkOiBsLmlkLAogICAgICAgIHNpemU6IGwuc2l6ZSwKICAgICAgICBxdHk6IGwucXR5LAogICAgICAgIG5hbWU6IGwubmFtZSwKICAgICAgICB1bml0QW1vdW50OiBsLnVuaXRBbW91bnQsCiAgICAgICAgbGluZVRvdGFsOiBsLmxpbmVUb3RhbCwKICAgICAgfSkpLAogICAgfTsKICAgIGlmIChpZGVtKSB7CiAgICAgIGF3YWl0IHJlZGlzKCkKICAgICAgICAuc2V0KGAke0lERU1fUkVTUF9QUkVGSVh9JHtpZGVtfWAsIEpTT04uc3RyaW5naWZ5KHBheWxvYWQpLCB7IGV4OiBJREVNX1RUTCB9KQogICAgICAgIC5jYXRjaCgoZXJyOiB1bmtub3duKSA9PiBjb25zb2xlLndhcm4oIltjcmVhdGUtb3JkZXJdIGlkZW1wb3RlbmN5IHN0b3JlIGZhaWxlZCIsIGVycikpOwogICAgfQogICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKHBheWxvYWQpOwogIH0gY2F0Y2ggKGVycikgewogICAgYXdhaXQgcmVsZWFzZUlkZW0oKTsKICAgIGNvbnN0IGRldGFpbCA9IGVyciBpbnN0YW5jZW9mIEVycm9yID8gZXJyLm1lc3NhZ2UgOiBTdHJpbmcoZXJyKTsKICAgIGNvbnNvbGUuZXJyb3IoIltjcmVhdGUtb3JkZXJdIHBheXBhbCBmYWlsZWQiLCBzaG9ydEtleShsZWRnZXJLZXkpLCBkZXRhaWwpOwogICAgcmV0dXJuIE5leHRSZXNwb25zZS5qc29uKAogICAgICB7IGVycm9yOiAiQ291bGQgbm90IHN0YXJ0IFBheVBhbCBjaGVja291dC4gVHJ5IGFnYWluIGluIGEgbW9tZW50LiIgfSwKICAgICAgeyBzdGF0dXM6IDUwMiB9CiAgICApOwogIH0KfQo=
+import { NextResponse } from "next/server";
+import { resolveCart } from "@/lib/catalog";
+import { createPayPalOrder } from "@/lib/paypal";
+import { newLedgerKey, recordCreated, shortKey } from "@/lib/ledger";
+import { estimateMargin, round2 } from "@/lib/pricing";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { redis } from "@/lib/admin-data";
+import type { CartLine } from "@/lib/types";
+
+export const runtime = "nodejs";
+
+const IDEM_PREFIX = "gn:idem:";
+const IDEM_RESP_PREFIX = "gn:idem-resp:";
+const IDEM_TTL = 86400;
+
+function parseLines(input: unknown): CartLine[] | null {
+  if (!Array.isArray(input) || input.length === 0 || input.length > 10) return null;
+  const lines: CartLine[] = [];
+  for (const raw of input) {
+    if (typeof raw !== "object" || raw === null) return null;
+    const { id, size, color, qty } = raw as Record<string, unknown>;
+    if (typeof id !== "string" || !/^([pa]\d+|gt-[a-z0-9-]+)$/.test(id)) return null;
+    if (typeof size !== "string" || !/^(XS|S|M|L|XL|2XL|3XL)$/.test(size)) return null;
+    if (typeof color !== "string" || !/^[A-Za-z ]{1,20}$/.test(color.trim())) return null;
+    const q = Math.floor(Number(qty));
+    if (!Number.isFinite(q) || q < 1 || q > 10) return null;
+    lines.push({ id, size, color: color.trim(), qty: q });
+  }
+  return lines;
+}
+
+function idempotencyKey(request: Request, body: unknown): string | null {
+  const raw =
+    request.headers.get("idempotency-key")?.trim() ||
+    (typeof body === "object" && body !== null
+      ? String((body as { idempotencyKey?: unknown }).idempotencyKey ?? "").trim()
+      : "");
+  return /^[A-Za-z0-9_-]{8,128}$/.test(raw) ? raw : null;
+}
+
+export async function POST(request: Request) {
+  const ip = clientIp(request);
+  const rl = await rateLimit("create-order", ip, 20, 3600);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many checkout attempts - try again later." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
+  }
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ error: "Missing request body" }, { status: 400 });
+  }
+  const lines = parseLines((body as { items?: unknown }).items);
+  if (!lines) {
+    return NextResponse.json({ error: "Invalid cart lines" }, { status: 400 });
+  }
+  const idem = idempotencyKey(request, body);
+  if (idem) {
+    try {
+      const claimed = await redis().set(`${IDEM_PREFIX}${idem}`, "processing", { nx: true, ex: IDEM_TTL });
+      if (!claimed) {
+        const stored = await redis().get(`${IDEM_RESP_PREFIX}${idem}`);
+        if (stored) {
+          const payload = typeof stored === "string" ? JSON.parse(stored) : stored;
+          return NextResponse.json(payload, { status: 200 });
+        }
+        return NextResponse.json({ error: "Duplicate request already in progress" }, { status: 409 });
+      }
+    } catch (err) {
+      console.warn("[create-order] idempotency check unavailable, proceeding", shortKey(String(idem)), err);
+    }
+  }
+  const releaseIdem = async () => {
+    if (idem) await redis().del(`${IDEM_PREFIX}${idem}`).catch(() => {});
+  };
+  let resolved;
+  try {
+    resolved = await resolveCart(lines);
+  } catch (err) {
+    await releaseIdem();
+    const detail = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: detail || "Invalid cart" }, { status: 400 });
+  }
+  if (resolved.lines.length === 0 || resolved.total <= 0) {
+    await releaseIdem();
+    return NextResponse.json({ error: "Cart is empty or unpurchasable" }, { status: 400 });
+  }
+  const ledgerKey = newLedgerKey();
+  try {
+    await recordCreated({ key: ledgerKey, lines, resolved });
+  } catch (err) {
+    await releaseIdem();
+    console.error("[create-order] ledger write failed", err);
+    return NextResponse.json({ error: "Store ledger unavailable - try again shortly." }, { status: 503 });
+  }
+  try {
+    const order = await createPayPalOrder(resolved, ledgerKey);
+    const margin = estimateMargin(resolved);
+    console.log("[create-order]", shortKey(ledgerKey), "total", resolved.total, "margin", margin.margin);
+    const payload = {
+      orderId: order.id,
+      ledgerKey,
+      totals: { subtotal: round2(resolved.subtotal), shipping: resolved.shipping, total: resolved.total },
+      lines: resolved.lines.map((l) => ({ id: l.id, size: l.size, qty: l.qty, name: l.name, unitAmount: l.unitAmount, lineTotal: l.lineTotal })),
+    };
+    if (idem) {
+      await redis().set(`${IDEM_RESP_PREFIX}${idem}`, JSON.stringify(payload), { ex: IDEM_TTL }).catch((err: unknown) => console.warn("[create-order] idempotency store failed", err));
+    }
+    return NextResponse.json(payload);
+  } catch (err) {
+    await releaseIdem();
+    const detail = err instanceof Error ? err.message : String(err);
+    console.error("[create-order] paypal failed", shortKey(ledgerKey), detail);
+    return NextResponse.json({ error: "Could not start PayPal checkout. Try again in a moment." }, { status: 502 });
+  }
+}
