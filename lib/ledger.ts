@@ -6,6 +6,13 @@
  * so an unfulfilled payment always shows up as `paid`/`fulfilling` and can be
  * retried or handled manually.
  *
+ * Race safety (#94): status transitions are atomic compare-and-set via a
+ * Redis Lua script. Only these transitions are legal:
+ *   created → paid → fulfilling → fulfilled
+ *   any → manual_review
+ * A concurrent double-capture/webhook race can therefore never downgrade a
+ * record (e.g. fulfilled back to paid) or double-append events.
+ *
  * Env: UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
  */
 import { Redis } from "@upstash/redis";
@@ -30,6 +37,11 @@ const TTL_SECONDS = 60 * 60 * 24 * 365;
 
 export function newLedgerKey(): string {
   return `ord_${Date.now().toString(36)}_${randomBytes(6).toString("hex")}`;
+}
+
+/** Truncated key for logs — a ledger key is bearer-equivalent, never log it whole. */
+export function shortKey(key: string): string {
+  return key.slice(0, 8);
 }
 
 function now(): string {
@@ -60,64 +72,118 @@ export async function recordCreated(params: {
   await redis().set(PREFIX + params.key, JSON.stringify(rec), { ex: TTL_SECONDS });
 }
 
-async function mutate(
+/**
+ * Atomic status transition (compare-and-set). Returns the fresh record on
+ * success, or null when the key is missing / the transition is illegal.
+ */
+const TRANSITION_SCRIPT = `
+local raw = redis.call("GET", KEYS[1])
+if not raw then return -1 end
+local rec = cjson.decode(raw)
+local from = rec["status"]
+local to = ARGV[1]
+local ok = false
+if to == "manual_review" then
+  ok = true
+elseif from == "created" and to == "paid" then
+  ok = true
+elseif from == "paid" and to == "fulfilling" then
+  ok = true
+elseif from == "fulfilling" and to == "fulfilled" then
+  ok = true
+end
+if not ok then return 0 end
+rec["status"] = to
+rec["updatedAt"] = ARGV[2]
+if ARGV[3] ~= "" then
+  local patch = cjson.decode(ARGV[3])
+  local pp = rec["paypal"]
+  if type(pp) ~= "table" then pp = {} end
+  for k, v in pairs(patch) do pp[k] = v end
+  rec["paypal"] = pp
+end
+if ARGV[4] ~= "" then
+  rec["printify"] = cjson.decode(ARGV[4])
+end
+local ev = cjson.decode(ARGV[5])
+local events = rec["events"]
+if type(events) ~= "table" then events = {} end
+events[#events + 1] = ev
+rec["events"] = events
+redis.call("SET", KEYS[1], cjson.encode(rec), "EX", tonumber(ARGV[6]))
+return 1
+`;
+
+async function transition(
   key: string,
-  fn: (rec: LedgerRecord) => LedgerRecord
+  to: LedgerRecord["status"],
+  opts: {
+    event: string;
+    detail?: string;
+    paypal?: LedgerRecord["paypal"];
+    printify?: NonNullable<LedgerRecord["printify"]>;
+  }
 ): Promise<LedgerRecord | null> {
-  const raw = await redis().get<ParsedLedger>(PREFIX + key);
-  if (!raw) return null;
-  const rec = parseLedger(raw);
-  const next = fn(rec);
-  next.updatedAt = now();
-  await redis().set(PREFIX + key, JSON.stringify(next), { ex: TTL_SECONDS });
-  return next;
+  const event = JSON.stringify({ at: now(), event: opts.event, detail: opts.detail });
+  let res: number;
+  try {
+    res = await redis().eval<number>(
+      TRANSITION_SCRIPT,
+      [PREFIX + key],
+      [
+        to,
+        now(),
+        opts.paypal ? JSON.stringify(opts.paypal) : "",
+        opts.printify ? JSON.stringify(opts.printify) : "",
+        event,
+        String(TTL_SECONDS),
+      ]
+    );
+  } catch (err) {
+    console.error("[ledger] transition script failed", shortKey(key), err);
+    return null;
+  }
+  if (res === 1) return getLedger(key);
+  if (res === 0) {
+    console.warn(`[ledger] illegal transition to "${to}" rejected`, shortKey(key));
+  }
+  return null;
 }
 
-/** Mark paid (from capture endpoint or verified webhook). */
+/** Mark paid (from capture endpoint or verified webhook). Never downgrades manual_review/fulfilled. */
 export async function recordPaid(key: string, paypal: LedgerRecord["paypal"], detail?: string): Promise<LedgerRecord | null> {
-  return mutate(key, (rec) => ({
-    ...rec,
-    status: "paid",
-    paypal: { ...rec.paypal, ...paypal },
-    events: [...rec.events, { at: now(), event: "paid", detail }],
-  }));
+  return transition(key, "paid", { event: "paid", detail, paypal });
 }
 
 /** Mark fulfillment started. */
 export async function recordFulfilling(key: string, detail?: string): Promise<LedgerRecord | null> {
-  return mutate(key, (rec) => ({
-    ...rec,
-    status: "fulfilling",
-    events: [...rec.events, { at: now(), event: "fulfilling", detail }],
-  }));
+  return transition(key, "fulfilling", { event: "fulfilling", detail });
 }
 
 /** Mark fulfilled with the Printify order id. */
 export async function recordFulfilled(key: string, printify: NonNullable<LedgerRecord["printify"]>): Promise<LedgerRecord | null> {
-  return mutate(key, (rec) => ({
-    ...rec,
-    status: "fulfilled",
+  return transition(key, "fulfilled", {
+    event: "fulfilled",
+    detail: `printify order ${printify.orderId}`,
     printify,
-    events: [...rec.events, { at: now(), event: "fulfilled", detail: `printify order ${printify.orderId}` }],
-  }));
+  });
 }
 
 /** Park for manual handling (unmapped variant, Printify error, etc.). */
 export async function recordManualReview(key: string, detail: string): Promise<LedgerRecord | null> {
-  return mutate(key, (rec) => ({
-    ...rec,
-    status: "manual_review",
-    events: [...rec.events, { at: now(), event: "manual_review", detail }],
-  }));
+  return transition(key, "manual_review", { event: "manual_review", detail });
 }
 
-/** Attach a capture id to an existing record (webhook path). */
+/** Attach a capture id to an existing record (webhook path). No status change. */
 export async function attachCapture(key: string, captureId: string): Promise<LedgerRecord | null> {
-  return mutate(key, (rec) => ({
-    ...rec,
-    paypal: { ...rec.paypal, captureId },
-    events: [...rec.events, { at: now(), event: "capture_linked", detail: captureId }],
-  }));
+  const raw = await redis().get<ParsedLedger>(PREFIX + key);
+  if (!raw) return null;
+  const rec = parseLedger(raw);
+  rec.paypal = { ...rec.paypal, captureId };
+  rec.events = [...rec.events, { at: now(), event: "capture_linked", detail: captureId }];
+  rec.updatedAt = now();
+  await redis().set(PREFIX + key, JSON.stringify(rec), { ex: TTL_SECONDS });
+  return rec;
 }
 
 export async function getLedger(key: string): Promise<LedgerRecord | null> {
