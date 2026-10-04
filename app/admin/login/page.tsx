@@ -57,6 +57,8 @@ export default async function AdminLoginPage({
         <input
           type="password"
           name="key"
+          aria-label="Admin key"
+          autoComplete="current-password"
           placeholder="Admin key"
           required
           autoFocus

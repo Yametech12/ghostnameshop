@@ -10,10 +10,10 @@ const money = (v: number) =>
 
 const STATUS_COLORS: Record<string, string> = {
   created: "#8a8a90",
-  paid: "#2563eb",
-  fulfilling: "#9333ea",
+  paid: "#6ea8ff",
+  fulfilling: "#b57bff",
   fulfilled: "#16a34a",
-  manual_review: "#dc2626",
+  manual_review: "#ff7a7a",
 };
 
 export default async function AdminPage() {
@@ -79,7 +79,7 @@ export default async function AdminPage() {
           <StatCard label="Paid Revenue" value={money(stats.revenue)} sub="paid, fulfilling, fulfilled, manual_review" />
           <StatCard label="Paid Orders" value={String(stats.orders)} />
           <StatCard label="Fulfilled" value={String(stats.statusCounts.fulfilled ?? 0)} sub="auto-fulfilled via Printify" />
-          <StatCard label="Needs Review" value={String(stats.statusCounts.manual_review ?? 0)} sub="check the orders table" accent={stats.statusCounts.manual_review ? "#dc2626" : undefined} />
+          <StatCard label="Needs Review" value={String(stats.statusCounts.manual_review ?? 0)} sub="check the orders table" accent={stats.statusCounts.manual_review ? "#ff7a7a" : undefined} />
         </section>
       )}
 
@@ -90,7 +90,7 @@ export default async function AdminPage() {
             {stats.days.map((d) => (
               <div key={d.day} style={{ flex: 1, textAlign: "center" }} title={`${d.day}: ${money(d.revenue)} · ${d.orders} orders`}>
                 <div style={{ height: `${Math.max(2, (d.revenue / maxDay) * 110)}px`, background: d.revenue > 0 ? "#8a4b3a" : "rgba(255,255,255,0.08)", borderRadius: 3, marginBottom: 6 }} />
-                <div style={{ fontSize: 9, color: "#71717a", transform: "rotate(-45deg)" }}>{d.day.slice(5)}</div>
+                <div style={{ fontSize: 9, color: "#9a9aa0", transform: "rotate(-45deg)" }}>{d.day.slice(5)}</div>
               </div>
             ))}
           </div>
@@ -116,12 +116,12 @@ export default async function AdminPage() {
       <section style={{ marginBottom: 48 }}>
         <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 14, color: "#c7c7cc" }}>Orders</h2>
         {orders.length === 0 ? (
-          <p style={{ color: "#71717a" }}>No orders yet.</p>
+          <p style={{ color: "#9a9aa0" }}>No orders yet.</p>
         ) : (
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
-                <tr style={{ color: "#71717a", textAlign: "left" }}>
+                <tr style={{ color: "#9a9aa0", textAlign: "left" }}>
                   <th style={th}>Order</th>
                   <th style={th}>Date</th>
                   <th style={th}>Status</th>
@@ -160,7 +160,7 @@ export default async function AdminPage() {
 
       <section>
         <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 6, color: "#c7c7cc" }}>Products</h2>
-        <p style={{ color: "#71717a", fontSize: 13, marginBottom: 16 }}>
+        <p style={{ color: "#9a9aa0", fontSize: 13, marginBottom: 16 }}>
           Live edits are stored in Redis and served to the storefront via <code>/api/products</code>. Price, name, tag, category, and sold-out flag.
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
@@ -179,9 +179,9 @@ const td: React.CSSProperties = { padding: "10px", verticalAlign: "top" };
 function StatCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: string }) {
   return (
     <div style={{ background: "#141416", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: 20 }}>
-      <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 1, color: "#71717a", marginBottom: 8 }}>{label}</div>
+      <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 1, color: "#9a9aa0", marginBottom: 8 }}>{label}</div>
       <div style={{ fontSize: 28, fontWeight: 800, color: accent ?? "#f2f2f0" }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: "#71717a", marginTop: 6 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 11, color: "#9a9aa0", marginTop: 6 }}>{sub}</div>}
     </div>
   );
 }
@@ -191,7 +191,7 @@ function ProductCard({ p }: { p: Awaited<ReturnType<typeof loadAdminCatalog>>[nu
     <div style={{ background: "#141416", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: 18 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
         <strong style={{ fontSize: 14 }}>{p.name}</strong>
-        <code style={{ fontSize: 11, color: "#71717a" }}>{p.id}</code>
+        <code style={{ fontSize: 11, color: "#9a9aa0" }}>{p.id}</code>
       </div>
       <div style={{ fontSize: 12, color: "#8a8a90", marginBottom: 12 }}>
         {p.cat} · {p.fabric} · {money(p.price)} · sizes {p.sizes.join("/")}
@@ -199,21 +199,21 @@ function ProductCard({ p }: { p: Awaited<ReturnType<typeof loadAdminCatalog>>[nu
       </div>
       <form action="/api/admin/products" method="post" style={{ display: "grid", gap: 8 }}>
         <input type="hidden" name="id" value={p.id} />
-        <input name="name" defaultValue={p.name} placeholder="Name" style={inputStyle} />
+        <input name="name" aria-label="Product name" defaultValue={p.name} placeholder="Name" style={inputStyle} />
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-          <select name="cat" defaultValue={p.cat} style={inputStyle}>
+          <select name="cat" aria-label="Category" defaultValue={p.cat} style={inputStyle}>
             {["Outerwear", "Tops", "Bottoms", "Accessories"].map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <input name="price" type="number" step="0.01" min="0" defaultValue={p.price} placeholder="Price USD" style={inputStyle} />
+          <input name="price" aria-label="Product price" type="number" step="0.01" min="0" defaultValue={p.price} placeholder="Price USD" style={inputStyle} />
         </div>
-        <input name="fabric" defaultValue={p.fabric} placeholder="Fabric" style={inputStyle} />
-        <input name="tag" defaultValue={p.tag} placeholder="Tag (NEW / LIMITED / empty)" style={inputStyle} />
+        <input name="fabric" aria-label="Product fabric" defaultValue={p.fabric} placeholder="Fabric" style={inputStyle} />
+        <input name="tag" aria-label="Product tag" defaultValue={p.tag} placeholder="Tag (NEW / LIMITED / empty)" style={inputStyle} />
         <label style={{ fontSize: 12, color: "#8a8a90", display: "flex", gap: 8, alignItems: "center" }}>
-          <input type="checkbox" name="soldOut" defaultChecked={p.soldOut} /> Sold out
+          <input type="checkbox" name="soldOut" defaultChecked={p.soldOut} style={{ width: 20, height: 20 }} /> Sold out
         </label>
-        <button type="submit" style={{ background: "#8a4b3a", color: "#fff", border: "none", padding: "10px", borderRadius: 4, cursor: "pointer", fontWeight: 700, fontSize: 12, letterSpacing: 1, textTransform: "uppercase" }}>
+        <button type="submit" style={{ background: "#8a4b3a", color: "#fff", border: "none", padding: "10px", borderRadius: 4, cursor: "pointer", fontWeight: 700, fontSize: 12, letterSpacing: 1, textTransform: "uppercase", minHeight: 44 }}>
           Save
         </button>
       </form>
@@ -230,4 +230,5 @@ const inputStyle: React.CSSProperties = {
   fontSize: 13,
   width: "100%",
   boxSizing: "border-box",
+  minHeight: 44,
 };

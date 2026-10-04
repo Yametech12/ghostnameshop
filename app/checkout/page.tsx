@@ -6,11 +6,13 @@
  * Flow:
  *  1. Cart arrives via sessionStorage (set by store.html) or localStorage mirror.
  *  2. POST /api/create-order -> server re-prices everything and creates the
- *     PayPal order (client prices are never trusted).
+ *     PayPal order (client prices are never trusted). The mount-time orderId
+ *     is reused by the PayPal button so we never create orphan orders.
  *  3. PayPal Buttons render; on approval the server captures + fulfills.
  */
-import { useCallback, useEffect, useRef, useState } from "react";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 
 interface CheckoutItem {
   id: string;
@@ -44,17 +46,132 @@ interface CaptureResponse {
   error?: string;
 }
 
-const money = (v: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(v);
+const usdFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+const money = (v: number) => usdFormatter.format(v);
+
+interface PayPalSectionProps {
+  clientId: string;
+  onCreateOrder: () => Promise<string>;
+  onApprove: (data: { orderID: string }) => Promise<void>;
+  onCancel: () => void;
+  onError: (msg: string) => void;
+}
+
+/**
+ * PayPal SDK bundle is lazy-loaded client-side only (ssr: false) so the
+ * heavy script never blocks the initial checkout render.
+ */
+const LazyPayPalSection = dynamic<PayPalSectionProps>(
+  () =>
+    import("@paypal/react-paypal-js").then(
+      (mod): { default: ComponentType<PayPalSectionProps> } => {
+      function PayPalSection({
+        clientId,
+        onCreateOrder,
+        onApprove,
+        onCancel,
+        onError,
+      }: PayPalSectionProps) {
+        const [{ isResolved, isRejected }] = mod.usePayPalScriptReducer();
+        const [scriptAttempt, setScriptAttempt] = useState(0);
+
+        if (isRejected) {
+          return (
+            <div>
+              <p
+                role="alert"
+                style={{ fontSize: 13, color: "#e5484d", marginTop: 14, lineHeight: 1.6 }}
+              >
+                PayPal failed to load. Check your connection and try again.
+              </p>
+              <button
+                type="button"
+                onClick={() => setScriptAttempt((a) => a + 1)}
+                style={{
+                  marginTop: 10,
+                  background: "transparent",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                  color: "#f2f2f0",
+                  padding: "12px 20px",
+                  borderRadius: 4,
+                  cursor: "pointer",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  textTransform: "uppercase",
+                }}
+              >
+                Retry
+              </button>
+            </div>
+          );
+        }
+
+        if (!isResolved) {
+          return (
+            <p style={{ fontSize: 13, color: "#8a8a90", marginTop: 14 }}>
+              Loading secure payment…
+            </p>
+          );
+        }
+
+        return (
+          <mod.PayPalScriptProvider
+            key={scriptAttempt}
+            options={{ clientId, currency: "USD", intent: "capture" }}
+          >
+            <mod.PayPalButtons
+              style={{ layout: "vertical", shape: "rect", color: "gold", label: "paypal" }}
+              createOrder={onCreateOrder}
+              onApprove={onApprove}
+              onCancel={onCancel}
+              onError={() =>
+                onError(
+                  "We couldn't confirm your payment. If you were charged, contact support — do not retry."
+                )
+              }
+            />
+          </mod.PayPalScriptProvider>
+        );
+      }
+      return { default: PayPalSection };
+    }),
+  {
+    ssr: false,
+    loading: () => (
+      <p style={{ fontSize: 13, color: "#8a8a90", marginTop: 14 }}>
+        Loading secure payment…
+      </p>
+    ),
+  }
+);
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const [lines, setLines] = useState<Line[] | null>(null);
   const [totals, setTotals] = useState<Totals | null>(null);
+  const [pricing, setPricing] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState<{ status: string; printify?: string } | null>(null);
   const itemsRef = useRef<CheckoutItem[] | null>(null);
   const ledgerKeyRef = useRef("");
   const capturingRef = useRef(false);
+  // Idempotency key generated once per checkout attempt (mount), never per retry.
+  const [idempotencyKey] = useState(() =>
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`
+  );
+  // Mount-time create-order result: reused by the PayPal button so we never
+  // POST create-order twice (fixes orphan orders). Re-created if cart changes.
+  const createOrderRef = useRef<{
+    itemsKey: string;
+    orderId: string;
+    ledgerKey: string;
+  } | null>(null);
 
   const loadCart = useCallback((): CheckoutItem[] | null => {
     try {
@@ -79,25 +196,41 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  const priceCart = useCallback(async (items: CheckoutItem[]) => {
-    setError("");
-    try {
-      const res = await fetch("/api/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
-      });
-      const data = (await res.json()) as CreateOrderResponse;
-      if (!res.ok || !data.totals) {
-        setError(data.error || "Could not prepare your order. Please try again.");
-        return;
+  const priceCart = useCallback(
+    async (items: CheckoutItem[]) => {
+      setError("");
+      setPricing(true);
+      try {
+        const res = await fetch("/api/create-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Idempotency-Key": idempotencyKey,
+          },
+          body: JSON.stringify({ items }),
+        });
+        const data = (await res.json()) as CreateOrderResponse;
+        if (!res.ok || !data.totals) {
+          setError(data.error || "Could not prepare your order. Please try again.");
+          return;
+        }
+        setTotals(data.totals);
+        if (data.lines?.length) setLines(data.lines);
+        if (data.orderId) {
+          createOrderRef.current = {
+            itemsKey: JSON.stringify(items),
+            orderId: data.orderId,
+            ledgerKey: data.ledgerKey || "",
+          };
+        }
+      } catch {
+        setError("Network error - check your connection and try again.");
+      } finally {
+        setPricing(false);
       }
-      setTotals(data.totals);
-      if (data.lines?.length) setLines(data.lines);
-    } catch {
-      setError("Network error - check your connection and try again.");
-    }
-  }, []);
+    },
+    [idempotencyKey]
+  );
 
   useEffect(() => {
     const items = loadCart();
@@ -112,16 +245,30 @@ export default function CheckoutPage() {
   const handleCreateOrder = useCallback(async (): Promise<string> => {
     const items = itemsRef.current;
     if (!items?.length) throw new Error("Cart is empty");
+    const itemsKey = JSON.stringify(items);
+    const cached = createOrderRef.current;
+    if (cached && cached.orderId && cached.itemsKey === itemsKey) {
+      ledgerKeyRef.current = cached.ledgerKey;
+      return cached.orderId;
+    }
     const res = await fetch("/api/create-order", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Idempotency-Key": idempotencyKey,
+      },
       body: JSON.stringify({ items }),
     });
     const data = (await res.json()) as CreateOrderResponse;
     if (!res.ok || !data.orderId) throw new Error(data.error || "Could not start checkout");
     ledgerKeyRef.current = data.ledgerKey || "";
+    createOrderRef.current = {
+      itemsKey,
+      orderId: data.orderId,
+      ledgerKey: data.ledgerKey || "",
+    };
     return data.orderId;
-  }, []);
+  }, [idempotencyKey]);
 
   const handleApprove = useCallback(
     async (data: { orderID: string }) => {
@@ -146,13 +293,22 @@ export default function CheckoutPage() {
         } catch {
           /* ignore */
         }
-        setDone({ status: out.status || "fulfilled", printify: out.printifyOrderId });
+        try {
+          router.push(`/thank-you?orderId=${encodeURIComponent(data.orderID)}`);
+        } catch {
+          setDone({ status: out.status || "fulfilled", printify: out.printifyOrderId });
+        }
       } finally {
         capturingRef.current = false;
       }
     },
-    []
+    [router]
   );
+
+  const handleCancel = useCallback(() => {
+    // Cart is intentionally kept — the customer can retry or edit.
+    setError("Payment cancelled — your cart is kept.");
+  }, []);
 
   if (done) return <DoneView status={done.status} printify={done.printify} />;
 
@@ -177,8 +333,10 @@ export default function CheckoutPage() {
         <Summary lines={lines} totals={totals} error={error} />
         <PayArea
           ready={Boolean(totals) && !error}
+          loading={pricing}
           onCreateOrder={handleCreateOrder}
           onApprove={handleApprove}
+          onCancel={handleCancel}
           onError={setError}
         />
       </div>
@@ -234,7 +392,7 @@ function Summary({
         ORDER REVIEW
       </h2>
       {error && (
-        <p style={{ color: "#e5484d", fontSize: 13, marginTop: 14 }}>{error}</p>
+        <p role="alert" style={{ color: "#e5484d", fontSize: 13, marginTop: 14 }}>{error}</p>
       )}
       {totals && (
         <>
@@ -302,28 +460,32 @@ function Row({
   );
 }
 
+const paySectionStyle: React.CSSProperties = {
+  border: "1px solid rgba(255,255,255,0.09)",
+  padding: 24,
+  background: "#121215",
+};
+
 function PayArea({
   ready,
+  loading,
   onCreateOrder,
   onApprove,
+  onCancel,
   onError,
 }: {
   ready: boolean;
+  loading: boolean;
   onCreateOrder: () => Promise<string>;
   onApprove: (data: { orderID: string }) => Promise<void>;
+  onCancel: () => void;
   onError: (msg: string) => void;
 }) {
   const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
   if (!clientId) {
     return (
-      <section
-        style={{
-          border: "1px solid rgba(255,255,255,0.09)",
-          padding: 24,
-          background: "#121215",
-        }}
-      >
+      <section style={paySectionStyle}>
         <h2 style={{ fontSize: 13, letterSpacing: 2, color: "#8a8a90", margin: 0 }}>
           PAYMENT
         </h2>
@@ -336,16 +498,26 @@ function PayArea({
     );
   }
 
-  if (!ready) return null;
+  if (!ready) {
+    if (!loading) return null;
+    return (
+      <section style={paySectionStyle} aria-busy="true">
+        <h2 style={{ fontSize: 13, letterSpacing: 2, color: "#8a8a90", margin: 0 }}>
+          PAYMENT
+        </h2>
+        <p role="status" style={{ fontSize: 13, color: "#8a8a90", marginTop: 14 }}>
+          Preparing your order…
+        </p>
+        <div aria-hidden="true" style={{ display: "grid", gap: 10, marginTop: 12 }}>
+          <div style={{ height: 44, borderRadius: 4, background: "rgba(255,255,255,0.06)" }} />
+          <div style={{ height: 44, borderRadius: 4, background: "rgba(255,255,255,0.06)" }} />
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section
-      style={{
-        border: "1px solid rgba(255,255,255,0.09)",
-        padding: 24,
-        background: "#121215",
-      }}
-    >
+    <section style={paySectionStyle}>
       <h2 style={{ fontSize: 13, letterSpacing: 2, color: "#8a8a90", margin: 0 }}>
         PAYMENT
       </h2>
@@ -353,18 +525,13 @@ function PayArea({
         Pay with PayPal balance or any debit/credit card &mdash; no PayPal account
         needed.
       </p>
-      <PayPalScriptProvider
-        options={{ clientId, currency: "USD", intent: "capture" }}
-      >
-        <PayPalButtons
-          style={{ layout: "vertical", shape: "rect", color: "gold", label: "paypal" }}
-          createOrder={onCreateOrder}
-          onApprove={onApprove}
-          onError={() =>
-            onError("PayPal could not be reached. Please try again.")
-          }
-        />
-      </PayPalScriptProvider>
+      <LazyPayPalSection
+        clientId={clientId}
+        onCreateOrder={onCreateOrder}
+        onApprove={onApprove}
+        onCancel={onCancel}
+        onError={onError}
+      />
     </section>
   );
 }

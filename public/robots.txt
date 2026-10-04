@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
+Disallow: /admin/
+Disallow: /checkout
+
 Sitemap: https://ghostnameworldwide.com/sitemap.xml

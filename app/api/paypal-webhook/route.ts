@@ -6,27 +6,46 @@ import {
   indexCapture,
   ledgerKeyForCapture,
   recordPaid,
+  shortKey,
 } from "@/lib/ledger";
 import { fulfillOrder } from "@/lib/fulfill";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
+
+const MAX_BODY_BYTES = 1024 * 1024; // 1MB — PayPal webhook events are a few KB
 
 /**
  * Webhook entry point. PayPal retries non-2xx deliveries, so this handler
  * must be idempotent: paid/fulfilled records short-circuit to 200.
  */
 export async function POST(request: Request) {
-  const raw = await request.text();
-  let event: Record<string, unknown>;
-  try {
-    event = JSON.parse(raw) as Record<string, unknown>;
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  const ip = clientIp(request);
+  const rl = await rateLimit("paypal-webhook", ip, 600, 60);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Rate limited" },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
   }
 
-  // 1. Authenticate the webhook — reject anything unsigned.
+  // Reject oversized payloads before buffering the body.
+  const declared = Number(request.headers.get("content-length") ?? "0");
+  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Webhook payload too large" }, { status: 400 });
+  }
+  const raw = await request.text();
+  if (raw.length > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Webhook payload too large" }, { status: 400 });
+  }
+  if (!raw || !raw.trim()) {
+    return NextResponse.json({ error: "Empty webhook event" }, { status: 400 });
+  }
+
+  // 1. Authenticate the webhook — reject anything unsigned. The RAW body is
+  // verified (not a re-serialized object) so legitimate events pass.
   try {
-    const valid = await verifyWebhook(request.headers, event);
+    const valid = await verifyWebhook(request.headers, raw);
     if (!valid) {
       console.warn("[webhook] signature verification failed");
       return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
@@ -35,6 +54,16 @@ export async function POST(request: Request) {
     // Missing webhook id / PayPal outage: 500 so PayPal retries later.
     console.error("[webhook] verification error", err);
     return NextResponse.json({ error: "Verification unavailable" }, { status: 500 });
+  }
+
+  let event: Record<string, unknown>;
+  try {
+    event = JSON.parse(raw) as Record<string, unknown>;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+  if (!event || typeof event !== "object") {
+    return NextResponse.json({ error: "Empty webhook event" }, { status: 400 });
   }
 
   const type = String(event.event_type ?? "");
@@ -47,7 +76,7 @@ export async function POST(request: Request) {
     const captureId = resourceId;
     let key = customId || (await ledgerKeyForCapture(captureId).catch(() => null)) || "";
 
-    let rec = key ? await getLedger(key) : null;
+    let rec = key ? await getLedger(key).catch(() => null) : null;
     if (!rec) {
       // Paid but no ledger record (e.g. expired key): log loudly for manual review.
       console.error("[webhook] PAID order with no ledger record", captureId, customId);
@@ -56,7 +85,7 @@ export async function POST(request: Request) {
 
     // Idempotent: already paid/fulfilled → ack.
     if (rec.status === "paid" || rec.status === "fulfilling" || rec.status === "fulfilled") {
-      if (!rec.paypal.captureId && captureId) await attachCapture(key, captureId);
+      if (!rec.paypal.captureId && captureId) await attachCapture(key, captureId).catch(() => {});
       return NextResponse.json({ ok: true, status: rec.status });
     }
 
@@ -101,10 +130,10 @@ export async function POST(request: Request) {
     const customId = String(
       (resource.purchase_units as Array<{ custom_id?: string }> | undefined)?.[0]?.custom_id ?? ""
     );
-    const rec = customId ? await getLedger(customId) : null;
+    const rec = customId ? await getLedger(customId).catch(() => null) : null;
     if (rec && rec.status === "created") {
-      await recordPaid(customId, { orderId: resourceId, status: "COMPLETED" });
-      console.warn("[webhook] CHECKOUT.ORDER.COMPLETED without capture event", resourceId);
+      await recordPaid(customId, { orderId: resourceId, status: "COMPLETED" }).catch(() => {});
+      console.warn("[webhook] CHECKOUT.ORDER.COMPLETED without capture event", resourceId, shortKey(customId));
     }
     return NextResponse.json({ ok: true });
   }

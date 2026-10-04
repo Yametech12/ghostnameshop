@@ -37,6 +37,18 @@ export function lineTotalFor(line: ResolvedLine): number {
 }
 
 /**
+ * Sales tax for an order. Currently 0 — GHOSTNAME has no sales-tax nexus in
+ * any US state yet.
+ * TODO(nexus): when the business establishes nexus (physical presence or
+ * economic thresholds crossed in a state), compute destination-based tax here
+ * via a tax provider (e.g. Stripe Tax / Avalara) using the PayPal shipping
+ * address, and add the tax line to the PayPal order breakdown.
+ */
+export function taxFor(_subtotal: number): number {
+  return 0;
+}
+
+/**
  * Rough margin report for a resolved cart (informational, logged to ledger).
  * PayPal US domestic reference: 3.49% + $0.49 fixed fee.
  */

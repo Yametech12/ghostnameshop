@@ -5,6 +5,9 @@
  * key never travels after login, and the server can verify the cookie without
  * storing session state. For API routes, `Authorization: Bearer <raw key>`
  * is also accepted (handy for scripts/curl).
+ *
+ * The key must be ≥ 32 chars — a weak key throws at boot rather than
+ * silently running.
  */
 import { createHash, timingSafeEqual } from "node:crypto";
 
@@ -17,10 +20,16 @@ function cookieToken(): string {
 
 function adminKey(): string {
   const key = process.env.ADMIN_DASHBOARD_KEY;
-  if (!key || key.length < 8) {
-    throw new Error("ADMIN_DASHBOARD_KEY missing or too short (min 8 chars)");
+  if (!key || key.length < 32) {
+    throw new Error("ADMIN_DASHBOARD_KEY missing or too short (min 32 chars)");
   }
   return key;
+}
+
+// Fail fast at boot when a key IS configured but too weak. (When no key is
+// configured at all, authConfigured() stays false and the login route 503s.)
+if (process.env.ADMIN_DASHBOARD_KEY !== undefined) {
+  adminKey();
 }
 
 function safeEqual(a: string, b: string): boolean {
@@ -75,8 +84,14 @@ export function isAdminRequest(request: Request, cookieHeader: string | null): b
       .split(";")
       .map((c) => c.trim())
       .find((c) => c.startsWith(ADMIN_COOKIE + "="));
-    if (match && verifyAdminCookie(decodeURIComponent(match.slice(ADMIN_COOKIE.length + 1)))) {
-      return true;
+    if (match) {
+      let token: string;
+      try {
+        token = decodeURIComponent(match.slice(ADMIN_COOKIE.length + 1));
+      } catch {
+        return false; // malformed cookie encoding — unauthenticated, never throw
+      }
+      if (verifyAdminCookie(token)) return true;
     }
   }
   return false;
