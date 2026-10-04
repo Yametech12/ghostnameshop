@@ -127,17 +127,19 @@ async function transition(
   const event = JSON.stringify({ at: now(), event: opts.event, detail: opts.detail });
   let res: number;
   try {
-    res = await redis().eval<number>(
-      TRANSITION_SCRIPT,
-      [PREFIX + key],
-      [
-        to,
-        now(),
-        opts.paypal ? JSON.stringify(opts.paypal) : "",
-        opts.printify ? JSON.stringify(opts.printify) : "",
-        event,
-        String(TTL_SECONDS),
-      ]
+    res = Number(
+      await redis().eval(
+        TRANSITION_SCRIPT,
+        [PREFIX + key],
+        [
+          to,
+          now(),
+          opts.paypal ? JSON.stringify(opts.paypal) : "",
+          opts.printify ? JSON.stringify(opts.printify) : "",
+          event,
+          String(TTL_SECONDS),
+        ]
+      )
     );
   } catch (err) {
     console.error("[ledger] transition script failed", shortKey(key), err);
