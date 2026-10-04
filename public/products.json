@@ -155,5 +155,107 @@
     "initial": "A3",
     "stock": 0,
     "allowOutOfStockPurchases": false
+  },
+  {
+    "id": "fw26-shadow-parka",
+    "name": "Shadow Parka",
+    "cat": "Outerwear",
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 480,
+      "eur": 442,
+      "gbp": 379,
+      "jpy": 75360
+    },
+    "tag": "",
+    "fabric": "Matte Technical Nylon",
+    "img": null,
+    "webp": null,
+    "initial": "07"
+  },
+  {
+    "id": "fw26-ghost-cargo",
+    "name": "Ghost Cargo Pants",
+    "cat": "Bottoms",
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 320,
+      "eur": 294,
+      "gbp": 253,
+      "jpy": 50240
+    },
+    "tag": "",
+    "fabric": "Heavy Cotton Twill",
+    "img": null,
+    "webp": null,
+    "initial": "08"
+  },
+  {
+    "id": "fw26-faceless-hoodie",
+    "name": "Faceless Hoodie",
+    "cat": "Outerwear",
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 260,
+      "eur": 239,
+      "gbp": 205,
+      "jpy": 40820
+    },
+    "tag": "",
+    "fabric": "Double-Layer Fleece",
+    "img": null,
+    "webp": null,
+    "initial": "09"
+  },
+  {
+    "id": "fw26-phantom-tee",
+    "name": "Phantom Tee",
+    "cat": "Tops",
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 95,
+      "eur": 87,
+      "gbp": 75,
+      "jpy": 14915
+    },
+    "tag": "",
+    "fabric": "Washed Cotton Jersey",
+    "img": null,
+    "webp": null,
+    "initial": "10"
+  },
+  {
+    "id": "fw26-wraith-denim",
+    "name": "Wraith Denim Jacket",
+    "cat": "Outerwear",
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 420,
+      "eur": 386,
+      "gbp": 332,
+      "jpy": 65940
+    },
+    "tag": "",
+    "fabric": "14oz Raw Selvedge Denim",
+    "img": null,
+    "webp": null,
+    "initial": "11"
+  },
+  {
+    "id": "fw26-void-accessories",
+    "name": "Void Accessories",
+    "cat": "Accessories",
+    "url": "/ghostnameshop/products.json",
+    "price": {
+      "usd": 60,
+      "eur": 55,
+      "gbp": 47,
+      "jpy": 9420
+    },
+    "tag": "",
+    "fabric": "Mixed Materials",
+    "img": null,
+    "webp": null,
+    "initial": "12"
   }
 ]
