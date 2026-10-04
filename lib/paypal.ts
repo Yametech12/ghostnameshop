@@ -8,9 +8,11 @@ import type { ResolvedCart } from "./types";
 const LIVE_BASE = "https://api-m.paypal.com";
 const BASE = process.env.PAYPAL_API_BASE || "https://api-m.sandbox.paypal.com";
 
-// Sandbox guard: in production the API base MUST be the live endpoint.
+// Sandbox guard: in the PRODUCTION deployment the API base MUST be the live endpoint.
 // A sandbox base in production would create fake orders against real checkouts.
-if (process.env.NODE_ENV === "production" && BASE !== LIVE_BASE) {
+// NOTE: checks VERCEL_ENV (not NODE_ENV) — NODE_ENV is "production" during EVERY
+// Vercel build, including Preview builds where Sandbox is intentional and safe.
+if (process.env.VERCEL_ENV === "production" && BASE !== LIVE_BASE) {
   throw new Error(
     `PAYPAL_API_BASE must be the live endpoint (${LIVE_BASE}) in production — refusing to boot against ${BASE}`
   );
