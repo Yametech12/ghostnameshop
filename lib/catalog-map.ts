@@ -1,12 +1,12 @@
 /**
- * Printify mapping — the bridge between storefront SKUs and Printify.
+ * Printify mapping —— the bridge between storefront SKUs and Printify.
  *
- * Real product (Oct 2026): "GHOSTNAMEÂ® WORLDWIDE — Minimalist Boxy Tee"
- * storefront id `gt-boxy-tee`, $39 base (+$3 for 2XL/3XL — see sizePriceAdjust
+ * Real product (Oct 2026): "GHOSTNAME® WORLDWIDE —— Minimalist Boxy Tee"
+ * storefront id `gt-boxy-tee`, $39 base (+$3 for 2XL/3XL —— see sizePriceAdjust
  * in lib/catalog.ts). Bella+Canvas 3010 Unisex Oversized Boxy Tee via
  * Printify Choice, in shop "My new store" (4053686).
  *
- * Until a product is mapped here, checkout still works — the order is
+ * Until a product is mapped here, checkout still works —— the order is
  * recorded as `manual_review` in the ledger instead of auto-fulfilled.
  */
 
@@ -41,7 +41,7 @@ export const PRINTIFY: Record<string, PrintifyMapping> = {
     blueprintId: 1382,
     printProviderId: 99,
     variants: [
-      // Black — Bella+Canvas 3010
+      // Black —— Bella+Canvas 3010
       { size: "XS", color: "Black", variantId: 103517, cost: 18.58 },
       { size: "S", color: "Black", variantId: 103518, cost: 18.58 },
       { size: "M", color: "Black", variantId: 103519, cost: 18.58 },
@@ -49,7 +49,7 @@ export const PRINTIFY: Record<string, PrintifyMapping> = {
       { size: "XL", color: "Black", variantId: 103521, cost: 18.58 },
       { size: "2XL", color: "Black", variantId: 103522, cost: 19.45 },
       { size: "3XL", color: "Black", variantId: 103523, cost: 19.45 },
-      // White — Bella+Canvas 3010
+      // White —— Bella+Canvas 3010
       { size: "XS", color: "White", variantId: 103545, cost: 18.58 },
       { size: "S", color: "White", variantId: 103546, cost: 18.58 },
       { size: "M", color: "White", variantId: 103547, cost: 18.58 },

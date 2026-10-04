@@ -29,10 +29,21 @@ export async function createPrintifyOrder(params: {
   lineItems: Array<{ product_id: string; variant_id: number; quantity: number }>;
   address: PrintifyAddress;
 }): Promise<{ id: string; status: string }> {
+  // HIGH FIX (1000x audit): DRY-RUN GUARD. Printify has no sandbox — a
+  // Sandbox PayPal end-to-end test would otherwise create a REAL print order
+  // (real print, real charge). Set PRINTIFY_DRY_RUN=1 in Preview/test envs.
+  if (process.env.PRINTIFY_DRY_RUN === "1") {
+    const dryId = `dry-run-${params.externalId}`;
+    console.warn(`[printify] DRY RUN — skipping real API call, returning fake order ${dryId}`);
+    return { id: dryId, status: "dry_run" };
+  }
   const { token, shopId } = assertEnv();
   const res = await fetch(`${BASE}/shops/${shopId}/orders.json`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    // MEDIUM FIX (1000x audit): 15s timeout — a hung Printify API must not
+    // hold a serverless invocation indefinitely.
+    signal: AbortSignal.timeout(15000),
     body: JSON.stringify({
       external_id: params.externalId,
       line_items: params.lineItems,

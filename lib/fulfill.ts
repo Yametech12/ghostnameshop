@@ -49,10 +49,20 @@ export async function fulfillOrder(
     return { ok: true, deduped: true };
   }
 
-  const mapped = rec.resolved?.lines.filter((l) => !l.fulfillment.unmapped) ?? [];
+  const lines = rec.resolved?.lines ?? [];
+  const mapped = lines.filter((l) => !l.fulfillment.unmapped);
   if (mapped.length === 0) {
     await recordManualReview(rec.key, "no mapped Printify variants for this cart");
     return { ok: false, manual: "no mapped Printify variants" };
+  }
+  // HIGH FIX (1000x audit): partial fulfillment. If ANY paid-for line is
+  // unmapped, route the WHOLE order to manual_review — never silently drop
+  // items the customer paid for by fulfilling only the mapped subset.
+  const unmappedCount = lines.length - mapped.length;
+  if (unmappedCount > 0) {
+    const reason = `partial mapping — ${unmappedCount} of ${lines.length} lines unmapped`;
+    await recordManualReview(rec.key, reason);
+    return { ok: false, manual: reason };
   }
   if (mapped.some((l) => !l.fulfillment.productId || !l.fulfillment.variantId)) {
     await recordManualReview(rec.key, "mapped lines missing product/variant ids");
