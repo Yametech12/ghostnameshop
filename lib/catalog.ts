@@ -17,13 +17,25 @@ export interface CatalogItem {
   price: { usd: number };
   tag: string;
   fabric?: string;
+  /** Units on hand; <= 0 means out of stock unless backorders are allowed. */
+  stock?: number;
+  /** When true, customers may buy even when stock is 0/unknown. */
+  allowOutOfStockPurchases?: boolean;
 }
 
 const items = catalogJson as unknown as Array<
   Omit<CatalogItem, "price"> & { price: Record<string, number> }
 >;
 
-const VALID: SizeKey[] = ["S", "M", "L", "XL", "OS"];
+export const VALID: SizeKey[] = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
+
+/**
+ * Retail surcharge for extended sizes. 2XL/3XL cost more to produce, so the
+ * $39 base becomes $42 — the storefront must show the same math.
+ */
+export function sizePriceAdjust(size: SizeKey): number {
+  return size === "2XL" || size === "3XL" ? 3 : 0;
+}
 
 /** Resolve a browser cart against the server catalog — never trust client prices. */
 export async function resolveCart(lines: CartLine[]): Promise<ResolvedCart> {
@@ -45,12 +57,24 @@ export async function resolveCart(lines: CartLine[]): Promise<ResolvedCart> {
     const o = overrides[base.id] ?? {};
 
     const name = o.name ?? base.name;
-    const unitPrice = typeof o.price === "number" ? o.price : base.price.usd;
     const tag = o.soldOut ? "SOLD OUT" : (o.tag ?? base.tag);
     if (tag === "SOLD OUT") continue;
 
-    const size = (VALID.includes(line.size as SizeKey) ? line.size : "M") as SizeKey;
-    const qty = Math.max(1, Math.min(2, Math.floor(line.qty) || 1)); // terms: cap 2/style
+    // Honor real inventory: out of stock + no backorders = not purchasable.
+    // (The tag check above is only the admin's manual kill-switch.)
+    const stock = typeof base.stock === "number" ? base.stock : undefined;
+    const allowBackorder = base.allowOutOfStockPurchases === true;
+    if (typeof stock === "number" && stock <= 0 && !allowBackorder) continue;
+
+    // Never coerce an invalid size to a default — reject the whole cart instead.
+    const size = line.size as SizeKey;
+    if (!VALID.includes(size)) {
+      throw new Error(`Invalid size "${line.size}" for product ${base.id}`);
+    }
+
+    const qty = Math.max(1, Math.min(10, Math.floor(line.qty) || 1)); // terms: cap 10/style
+    const basePrice = typeof o.price === "number" ? o.price : base.price.usd;
+    const unitPrice = round2(basePrice + sizePriceAdjust(size));
     const fulfillment: PrintifyLine | null = printifyFor(base.id, size);
     resolved.push({
       id: base.id,
