@@ -141,6 +141,8 @@ input{font-family:inherit}
 .h3{font-family:var(--font-display);font-weight:500;font-size:clamp(26px,3vw,40px);line-height:1.15}
 .quote{font-family:var(--font-display);font-style:italic;font-weight:400;font-size:clamp(28px,4vw,56px);line-height:1.25}
 .display-hero,.h1,.h2,.h3,.quote,.footer-tagline{text-wrap:balance}
+.footer-logo{font-family:var(--font-display);font-size:22px;letter-spacing:0.08em;color:var(--text);margin-bottom:12px}
+.footer-brand .small{line-height:1.7}
 .eyebrow{font-size:11px;font-weight:600;letter-spacing:0.32em;text-transform:uppercase;line-height:1.5}
 .label{font-size:12px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;line-height:1.4}
 .small{font-size:14px;line-height:1.6}
@@ -187,9 +189,7 @@ input{font-family:inherit}
 @media (pointer:fine){
   .cursor{display:block;position:fixed;top:0;left:0;z-index:var(--z-cursor);pointer-events:none;
     width:12px;height:12px;border-radius:50%;background:var(--accent);mix-blend-mode:difference;
-    transform:translate(-50%,-50%);opacity:0;
-    transition:width 300ms var(--ease),height 300ms var(--ease),background-color 300ms,opacity 250ms var(--ease)}
-  .cursor.is-on{opacity:1}
+    transform:translate(-50%,-50%);transition:width 300ms var(--ease),height 300ms var(--ease),background-color 300ms}
   .cursor .cursor-label{display:none;font-size:10px;font-weight:600;letter-spacing:0.3em;color:#0A0A0A}
   .cursor.is-view{width:88px;height:88px;background:var(--accent);mix-blend-mode:normal}
   .cursor.is-view .cursor-label{display:block;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
@@ -287,7 +287,7 @@ input{font-family:inherit}
    ============================================================ */
 .lookbook{background:var(--bg);padding:var(--space-section) 0}
 .lookbook-head{padding:0 24px 24px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;max-width:1440px;margin:0 auto}
-.lookbook-head .eyebrow{color:var(--accent)}
+.lookbook-head .eyebrow{color:var(--accent);letter-spacing:0.3em}
 .lookbook-head h2{margin-top:16px}
 .lookbook-sub{margin-top:16px;color:var(--text-muted)}
 .lookbook-counter{font-size:12px;font-weight:600;letter-spacing:0.22em;color:var(--text-muted);white-space:nowrap}
@@ -378,13 +378,23 @@ input{font-family:inherit}
 /* ============================================================
    FOOTER
    ============================================================ */
+
+/* ===== BRAND STATEMENT — premium "TOKYO -> WORLDWIDE" section ===== */
+.brand-statement{background:var(--bg);border-top:1px solid var(--border);
+  padding:clamp(120px,15vw,220px) 24px;text-align:center}
+.brand-inner{max-width:960px;margin:0 auto}
+.brand-title{font-family:var(--font-display);font-weight:500;
+  font-size:clamp(44px,7.5vw,110px);line-height:1.08;letter-spacing:0.02em;
+  margin:36px 0 28px;color:var(--text)}
+.brand-title .arr{color:var(--accent);font-weight:400}
+.brand-sub{font-size:clamp(15px,1.8vw,19px);letter-spacing:0.06em;color:var(--text-muted)}
 .site-footer{background:var(--bg);border-top:1px solid var(--border);
   padding:64px 24px calc(40px + env(safe-area-inset-bottom))}
 .footer-grid{display:grid;grid-template-columns:1fr;gap:32px;max-width:1440px;margin:0 auto}
 .footer-col h4{font-size:12px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px}
 .footer-col ul{list-style:none}
-.footer-col a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;color:var(--text);transition:color 200ms}
-.footer-col a:hover{color:var(--text-muted)}
+.footer-col a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;color:var(--text);transition:color 200ms,transform 250ms var(--ease)}
+.footer-col a:hover{color:var(--text-muted);transform:translateX(4px)}
 .footer-tagline{font-family:var(--font-display);font-size:28px;color:var(--text)}
 .footer-tag-sub{margin-top:8px;color:var(--text-muted)}
 .footer-bottom{max-width:1440px;margin:48px auto 0;padding-top:24px;border-top:1px solid var(--border);
@@ -605,7 +615,7 @@ input{font-family:inherit}
   .scroll-cue .cue-line{height:56px}
   /* Desktop lookbook: vertical runway, one 100vh look, snap proximity */
   .lookbook{padding:0}
-  .lookbook-head{padding:96px 48px 48px}
+  .lookbook-head{padding:120px 48px 64px}
   .lookbook-progress{display:none}
   .lookbook-track{flex-direction:column;overflow-x:visible;overflow-y:auto;scroll-snap-type:y proximity;
     height:auto;overscroll-behavior-y:auto;touch-action:auto}
@@ -726,10 +736,10 @@ html,body{overflow-x:hidden}
 
 /* Footer mega wordmark */
 .footer-mega{font-family:var(--font-display);font-weight:500;text-transform:uppercase;
-  white-space:nowrap;overflow:hidden;user-select:none;
-  font-size:clamp(40px,12.5vw,180px);line-height:0.95;letter-spacing:0.04em;
-  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,0.16);
-  max-width:1440px;margin:0 auto 48px}
+  white-space:nowrap;overflow:hidden;user-select:none;text-align:center;
+  font-size:clamp(40px,10.5vw,150px);line-height:1;letter-spacing:0.05em;
+  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,0.18);
+  max-width:1440px;margin:0 auto 64px;padding:0 24px}
 
 /* Scrollbar - refined, on-brand */
 html{scrollbar-width:thin;scrollbar-color:#3a3a3a #0A0A0A}
@@ -1009,6 +1019,15 @@ var NEWSLETTER_ACTION = "";
 </section>
 </main>
 
+<!-- ===== BRAND STATEMENT ===== -->
+<section class="brand-statement" aria-label="Brand statement">
+  <div class="brand-inner">
+    <p class="eyebrow reveal">06 — WORLDWIDE</p>
+    <h2 class="brand-title reveal">TOKYO <span class="arr" aria-hidden="true">&rarr;</span> WORLDWIDE</h2>
+    <p class="brand-sub reveal">Designed in the dark. Worn everywhere.</p>
+  </div>
+</section>
+
 <!-- ===== FOOTER ===== -->
 <footer class="site-footer" id="contact">
   <div class="footer-mega" aria-hidden="true">GHOSTNAME®</div>
@@ -1039,9 +1058,9 @@ var NEWSLETTER_ACTION = "";
         <li><a href="/legal/privacy.html">Privacy</a></li>
       </ul>
     </div>
-    <div class="footer-col">
-      <p class="footer-tagline">TOKYO → WORLDWIDE</p>
-      <p class="small footer-tag-sub muted">Designed in the dark. Worn&nbsp;everywhere.</p>
+    <div class="footer-col footer-brand">
+      <p class="footer-logo">GHOSTNAME&reg;</p>
+      <p class="small muted">Premium heavyweight essentials.<br>Tokyo street spirit.</p>
     </div>
   </div>
   <div class="footer-bottom">
@@ -1926,51 +1945,31 @@ function initLogoReveal(){
 /* ============================================================
    CUSTOM CURSOR (pointer:fine only)
    ============================================================ */
-/* Robust custom cursor: buttery-smooth rAF follow that never freezes mid-screen.
-   The dot fades out when idle or when the pointer leaves the window (instead of
-   freezing in place), and the expanded VIEW circle eases upward so it never
-   covers the headline text beneath the pointer. */
-let __cursorInit = false;
 function initCursor(){
-  if (__cursorInit || !FINE_POINTER || REDUCED) return;
-  __cursorInit = true;
+  if (!FINE_POINTER || REDUCED) return;
   const dot = document.getElementById("cursor");
   const label = document.getElementById("cursorLabel");
-  if (!dot) return;
   let x = -100, y = -100, tx = -100, ty = -100;
-  let oy = 0, toy = 0; /* eased vertical offset for VIEW mode */
-  let idleTimer = 0, shown = false;
-  const show = () => { if (!shown){ shown = true; dot.classList.add("is-on"); } };
-  const hide = () => { if (shown){ shown = false; dot.classList.remove("is-on"); } clearTimeout(idleTimer); };
-  const poke = (cx, cy) => {
-    if (typeof cx !== "number" || typeof cy !== "number") return;
-    tx = cx; ty = cy; show();
+  let idleTimer = 0, cursorActive = true;
+  document.addEventListener("mousemove", e => {
+    tx = e.clientX; ty = e.clientY;
+    if (!cursorActive){ cursorActive = true; requestAnimationFrame(loop); }
     clearTimeout(idleTimer);
-    idleTimer = setTimeout(hide, 2200);
-  };
-  document.addEventListener("mousemove", e => poke(e.clientX, e.clientY), { passive:true });
-  document.documentElement.addEventListener("mouseleave", hide);
-  document.documentElement.addEventListener("mouseenter", e => poke(e.clientX, e.clientY));
-  window.addEventListener("blur", hide);
-  window.addEventListener("focus", show);
+    idleTimer = setTimeout(() => { cursorActive = false; }, 2000);
+  }, { passive:true });
   (function loop(){
-    /* loop never stops — visibility is opacity-only, so the dot can never freeze */
-    x += (tx - x) * 0.2; y += (ty - y) * 0.2;
-    toy = dot.classList.contains("is-view") ? -64 : 0;
-    oy += (toy - oy) * 0.2;
-    dot.style.transform = `translate(${x.toFixed(1)}px, ${(y + oy).toFixed(1)}px) translate(-50%,-50%)`;
+    if (!cursorActive) return;
+    x += (tx - x) * 0.18; y += (ty - y) * 0.18;
+    dot.style.transform = `translate(${x}px, ${y}px) translate(-50%,-50%)`;
     requestAnimationFrame(loop);
   })();
-  const setZone = el => {
-    const zone = el && el.closest ? el.closest(".look-hover-zone") : null;
+  document.addEventListener("mouseover", e => {
+    const zone = e.target.closest(".look-hover-zone");
     if (zone){
-      if (label) label.textContent = zone.dataset.cursor || "VIEW";
+      label.textContent = zone.dataset.cursor || "VIEW";
       dot.classList.add("is-view");
     } else dot.classList.remove("is-view");
-  };
-  document.addEventListener("mouseover", e => setZone(e.target), { passive:true });
-  /* re-evaluate when focus moves (e.g. modal opens under a stationary pointer) */
-  document.addEventListener("focusin", e => setZone(e.target));
+  }, { passive:true });
 }
 
 /* ============================================================
