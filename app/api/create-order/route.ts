@@ -107,7 +107,7 @@ export async function POST(request: Request) {
       orderId: order.id,
       ledgerKey,
       totals: { subtotal: round2(resolved.subtotal), shipping: resolved.shipping, total: resolved.total },
-      lines: resolved.lines.map((l) => ({ id: l.id, size: l.size, qty: l.qty, name: l.name, unitAmount: l.unitAmount, lineTotal: l.lineTotal })),
+      lines: resolved.lines.map((l) => ({ id: l.id, size: l.size, color: l.color, qty: l.qty, name: l.name, unitAmount: l.unitAmount, lineTotal: l.lineTotal })),
     };
     if (idem) {
       await redis().set(`${IDEM_RESP_PREFIX}${idem}`, JSON.stringify(payload), { ex: IDEM_TTL }).catch((err: unknown) => console.warn("[create-order] idempotency store failed", err));

@@ -17,11 +17,15 @@ import { useRouter } from "next/navigation";
 interface CheckoutItem {
   id: string;
   size: string;
+  /** Color name matching the catalog (e.g. "Black", "White"). Required — never defaulted. */
+  color: string;
   qty: number;
 }
 interface Line {
   id: string;
   size: string;
+  /** Validated color name (e.g. "Black", "White"). */
+  color: string;
   qty: number;
   name: string;
   unitAmount: number;
@@ -174,11 +178,51 @@ export default function CheckoutPage() {
   } | null>(null);
 
   const loadCart = useCallback((): CheckoutItem[] | null => {
+    // Strict cart hygiene: id, size (XS–3XL whitelist), color (validated like the
+    // server), and qty > 0 are ALL required. Legacy or corrupt entries missing
+    // color are rejected outright — never silently defaulted — so the server
+    // never 400s on a colorless line and the wrong variant can never ship.
+    const VALID_SIZES = new Set(["XS", "S", "M", "L", "XL", "2XL", "3XL"]);
+    const COLOR_RE = /^[A-Za-z ]{1,20}$/;
+    const sanitize = (raw: unknown): CheckoutItem[] | null => {
+      if (!Array.isArray(raw)) return null;
+      const items = (
+        raw as Array<{
+          id?: unknown;
+          size?: unknown;
+          color?: unknown;
+          qty?: unknown;
+        }>
+      )
+        .filter(
+          (
+            c
+          ): c is { id: string; size: string; color: string; qty: number } =>
+            !!c &&
+            typeof c.id === "string" &&
+            c.id.length > 0 &&
+            typeof c.size === "string" &&
+            VALID_SIZES.has(c.size) &&
+            typeof c.color === "string" &&
+            COLOR_RE.test(c.color.trim()) &&
+            typeof c.qty === "number" &&
+            Number.isFinite(c.qty) &&
+            c.qty > 0
+        )
+        .map((c) => ({
+          id: c.id,
+          size: c.size,
+          color: c.color.trim(),
+          qty: Math.floor(c.qty),
+        }));
+      return items.length ? items : null;
+    };
     try {
       const sess = sessionStorage.getItem("gn_checkout");
       if (sess) {
-        const parsed = JSON.parse(sess) as { items: CheckoutItem[] };
-        if (Array.isArray(parsed.items) && parsed.items.length) return parsed.items;
+        const parsed = JSON.parse(sess) as { items: unknown };
+        const items = sanitize(parsed.items);
+        if (items) return items;
       }
     } catch {
       /* fall through */
@@ -186,11 +230,8 @@ export default function CheckoutPage() {
     try {
       const local = JSON.parse(
         localStorage.getItem("gn_cart") || "[]"
-      ) as Array<{ id: string; size?: string; qty: number }>;
-      const items = local
-        .filter((c) => c && typeof c.id === "string" && c.qty > 0)
-        .map((c) => ({ id: c.id, size: c.size || "M", qty: c.qty }));
-      return items.length ? items : null;
+      ) as unknown;
+      return sanitize(local);
     } catch {
       return null;
     }
@@ -398,7 +439,7 @@ function Summary({
         <>
           {lines?.map((l) => (
             <div
-              key={`${l.id}-${l.size}`}
+              key={`${l.id}-${l.color}-${l.size}`}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -412,7 +453,7 @@ function Summary({
                 {l.name}
                 <span style={{ color: "#8a8a90" }}>
                   {" "}
-                  &middot; {l.size} &times; {l.qty}
+                  &middot; {l.color}, {l.size} &times; {l.qty}
                 </span>
               </span>
               <span>{money(l.lineTotal)}</span>
