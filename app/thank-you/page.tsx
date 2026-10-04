@@ -1,6 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Order Confirmed — GHOSTNAME WORLDWIDE",
   robots: { index: false },
 };
@@ -10,7 +11,13 @@ export const metadata = {
  * state lives in the ledger; PayPal delivers the customer here after
  * a redirect-based approval (buttons capture in-page usually).
  */
-export default function ThankYouPage() {
+export default async function ThankYouPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ orderId?: string }>;
+}) {
+  const { orderId } = await searchParams;
+
   return (
     <main
       style={{
@@ -33,9 +40,27 @@ export default function ThankYouPage() {
         >
           ORDER CONFIRMED
         </h1>
+        {orderId ? (
+          <p style={{ color: "#f2f2f0", fontSize: 15, fontWeight: 700, marginTop: 12 }}>
+            Order {orderId} confirmed
+          </p>
+        ) : null}
+        <div
+          style={{
+            border: "1px solid rgba(255,255,255,0.09)",
+            background: "#121215",
+            padding: 16,
+            marginTop: 16,
+            textAlign: "left",
+          }}
+        >
+          <p style={{ color: "#8a8a90", fontSize: 13, lineHeight: 1.7, margin: 0 }}>
+            Order details will appear here once your payment is verified against
+            our records.
+          </p>
+        </div>
         <p style={{ color: "#8a8a90", fontSize: 14, lineHeight: 1.7, marginTop: 12 }}>
-          Payment received. Your pieces are being prepared &mdash; dispatch
-          tracking is on its way to your email.
+          A confirmation email is on its way.
         </p>
         <Link
           href="/store.html"
