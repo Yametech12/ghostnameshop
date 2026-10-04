@@ -37,7 +37,7 @@ type Params = { slug: string };
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<Params> | Params;
+  params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug } = await params;
   const product = findProduct(slug);
@@ -52,7 +52,7 @@ export async function generateMetadata({
 export default async function ProductPage({
   params,
 }: {
-  params: Promise<Params> | Params;
+  params: Promise<Params>;
 }) {
   const { slug } = await params;
   const product = findProduct(slug);
