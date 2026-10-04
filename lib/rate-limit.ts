@@ -49,7 +49,7 @@ export async function rateLimit(
   const safeIp = ip.replace(/[^a-zA-Z0-9.:]/g, "").slice(0, 64) || "unknown";
   const key = `gn:rl:${safeRoute}:${safeIp}`;
   try {
-    const count = await redis().eval<number>(WINDOW_SCRIPT, [key], [String(windowSec)]);
+    const count = Number(await redis().eval(WINDOW_SCRIPT, [key], [String(windowSec)]));
     if (count > limit) {
       const ttl = await redis().ttl(key);
       return { ok: false, remaining: 0, retryAfter: ttl > 0 ? ttl : windowSec };
