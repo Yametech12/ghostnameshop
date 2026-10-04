@@ -36,9 +36,15 @@
 </script>
 
 <!-- ===== Fonts: Cormorant Garamond (display) + Inter (body) ===== -->
+<!-- PERF: font CSS no longer render-blocks (media=print swap trick). display=swap
+     keeps font-display:swap so text never blocks on webfonts (no FOIT).
+     Cormorant 600 dropped - audited unused (display face uses 400/500 + italics only);
+     Inter 400/500/600 all used. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600&display=swap"></noscript>
 
 <style>
 /* ============================================================
@@ -613,40 +619,19 @@ html,body{overflow-x:hidden}
   .swipe-hint{animation:hintFade 0.6s ease 3s forwards}
   .sticky-atc{transition:none}
 }
+
+/* ============================================================
+   PERF - offscreen rendering skip (no visual change)
+   Below-fold sections skip rendering work until near the viewport.
+   contain-intrinsic-size reserves layout space so there is no
+   layout shift when they render. Hero excluded (LCP element).
+   ============================================================ */
+.lookbook,.featured,.archive,.story,.newsletter,.site-footer{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 900px;
+}
 </style>
 
-<!-- ===== CHECKOUT CONFIG — the ONLY place to edit checkout settings ===== -->
-<script>
-/* Snipcart PUBLIC test key: app.snipcart.com → Account → Credentials.
-   NEVER put the secret key in this file. Checkout stays disabled (and the
-   existing /checkout PayPal flow keeps working) while this is a placeholder. */
-var SNIPCART_PUBLIC_KEY = "SET_YOUR_SNIPCART_PUBLIC_KEY";
-/* URL Snipcart fetches to validate prices/ids. This deployment serves the
-   catalog (same shape as products.json) at /api/products with id + price object. */
-var SNIPCART_VALIDATION_URL = "/api/products";
-var SNIPCART_CONFIGURED = !!SNIPCART_PUBLIC_KEY && SNIPCART_PUBLIC_KEY.indexOf("SET_YOUR") !== 0;
-/* Newsletter form action (Mailchimp-style). Empty = forms fail closed with a
-   clear message instead of POSTing to a fake endpoint. */
-var NEWSLETTER_ACTION = "";
-/* Load Snipcart only when configured — on-user-interaction keeps the page fast. */
-(function () {
-    if (!SNIPCART_CONFIGURED) return;
-    window.SnipcartSettings = {
-        publicApiKey: SNIPCART_PUBLIC_KEY,
-        loadStrategy: "on-user-interaction",
-        modalStyle: "side",
-        currency: "usd"
-    };
-    var s = document.createElement("script");
-    s.async = true;
-    s.src = "https://cdn.snipcart.com/themes/v3.4.0/default/snipcart.js";
-    document.head.appendChild(s);
-    var l = document.createElement("link");
-    l.rel = "stylesheet";
-    l.href = "https://cdn.snipcart.com/themes/v3.4.0/default/snipcart.css";
-    document.head.appendChild(l);
-})();
-</script>
 </head>
 
 <body>
@@ -1001,6 +986,39 @@ var NEWSLETTER_ACTION = "";
   </div>
 </div>
 
+<!-- ===== CHECKOUT CONFIG (relocated from <head> for perf: parser-blocking scripts
+     belong at end of <body>; execution order vs the app script below is unchanged) — the ONLY place to edit checkout settings ===== -->
+<script>
+/* Snipcart PUBLIC test key: app.snipcart.com → Account → Credentials.
+   NEVER put the secret key in this file. Checkout stays disabled (and the
+   existing /checkout PayPal flow keeps working) while this is a placeholder. */
+var SNIPCART_PUBLIC_KEY = "SET_YOUR_SNIPCART_PUBLIC_KEY";
+/* URL Snipcart fetches to validate prices/ids. This deployment serves the
+   catalog (same shape as products.json) at /api/products with id + price object. */
+var SNIPCART_VALIDATION_URL = "/api/products";
+var SNIPCART_CONFIGURED = !!SNIPCART_PUBLIC_KEY && SNIPCART_PUBLIC_KEY.indexOf("SET_YOUR") !== 0;
+/* Newsletter form action (Mailchimp-style). Empty = forms fail closed with a
+   clear message instead of POSTing to a fake endpoint. */
+var NEWSLETTER_ACTION = "";
+/* Load Snipcart only when configured — on-user-interaction keeps the page fast. */
+(function () {
+    if (!SNIPCART_CONFIGURED) return;
+    window.SnipcartSettings = {
+        publicApiKey: SNIPCART_PUBLIC_KEY,
+        loadStrategy: "on-user-interaction",
+        modalStyle: "side",
+        currency: "usd"
+    };
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://cdn.snipcart.com/themes/v3.4.0/default/snipcart.js";
+    document.head.appendChild(s);
+    var l = document.createElement("link");
+    l.rel = "stylesheet";
+    l.href = "https://cdn.snipcart.com/themes/v3.4.0/default/snipcart.css";
+    document.head.appendChild(l);
+})();
+</script>
 <script>
 "use strict";
 /* ============================================================
@@ -1768,28 +1786,35 @@ window.addEventListener("hashchange", routeFromHash);
 /* ============================================================
    BOOT
    ============================================================ */
-(async function boot(){
-  /* Commerce catalog: /api/products live, products.json fallback.
-     Editorial LOOKS merge in so cart/search/product views resolve. */
-  try {
-    const res = await fetch("/api/products").catch(() => null);
-    const live = res && res.ok ? await res.json() : await (await fetch("products.json")).json();
-    ALL = Array.isArray(live) ? live : [];
-  } catch(err){
-    console.error("catalog failed to load", err);
-    toast("Catalog failed to load");
-    ALL = [];
-  }
-  LOOKS.forEach(l => { if (!ALL.find(p => p.id === l.id)) ALL.push(l); });
-
-  renderLookbook();
+(function boot(){
+  /* PERF: UI init runs immediately - the hero reveal (LCP) must not wait for the
+     catalog network round-trips (/api/products + products.json fallback).
+     Catalog-dependent renders stay in the async continuation below, in their
+     original relative order. */
   initLogoReveal();
   initReveals();
   initCursor();
   initNewsletter();
   initCookies();
-  updateCart();
-  routeFromHash();
+
+  /* Commerce catalog: /api/products live, products.json fallback.
+     Editorial LOOKS merge in so cart/search/product views resolve. */
+  (async function(){
+    try {
+      const res = await fetch("/api/products").catch(() => null);
+      const live = res && res.ok ? await res.json() : await (await fetch("products.json")).json();
+      ALL = Array.isArray(live) ? live : [];
+    } catch(err){
+      console.error("catalog failed to load", err);
+      toast("Catalog failed to load");
+      ALL = [];
+    }
+    LOOKS.forEach(l => { if (!ALL.find(p => p.id === l.id)) ALL.push(l); });
+
+    renderLookbook();
+    updateCart();
+    routeFromHash();
+  })();
 })();
 </script>
 
