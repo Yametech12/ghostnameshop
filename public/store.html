@@ -292,6 +292,7 @@ input{font-family:inherit}
 .look{flex:0 0 calc(100vw - 12px);height:92vh;height:92svh;scroll-snap-align:start;position:relative;overflow:hidden;background:#171717}
 .look .placeholder{position:absolute;inset:0}
 .look-media{position:absolute;inset:0}
+.look-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .look-scrim{position:absolute;inset:0;background:var(--scrim);pointer-events:none;z-index:1}
 .look-overlay{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:24px}
 .look-overlay .eyebrow{color:var(--accent)}
@@ -405,6 +406,7 @@ input{font-family:inherit}
 .gallery-track::-webkit-scrollbar{display:none}
 .gallery-slide{flex:0 0 calc(100vw - 12px);aspect-ratio:4/5;scroll-snap-align:start;position:relative}
 .gallery-slide .placeholder{position:absolute;inset:0}
+.gallery-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .gallery-count{position:absolute;right:16px;bottom:16px;z-index:2;padding:8px 12px;
   background:rgba(10,10,10,0.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   font-size:11px;font-weight:600;letter-spacing:0.18em;color:var(--text)}
@@ -1237,7 +1239,65 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&
    Slugs are lowercase-hyphenated. Merges into ALL at boot so
    cart/search/wishlist resolve; /checkout re-prices by id.
    ============================================================ */
-const LOOKS = [];
+const LOOKS = [
+  {
+    id: "gt-barcode-boxy",
+    slug: "gt-barcode-boxy",
+    look: "01",
+    name: "GHOSTNAME\u00ae WORLDWIDE \u2014 Barcode Boxy Tee",
+    price: { usd: 30 },
+    desc: "Scannable attitude, zero noise. Barcode chest print with GHOSTNAME\u00ae.",
+    eyebrow: "GHOSTNAME\u00ae \u2014 ESSENTIALS",
+    note: "Bella+Canvas 3010 \u00b7 Unisex Oversized Boxy Tee",
+    surcharge: "+$2 for 2XL \u00b7 +$5 for 3XL",
+    sizes: ["XS","S","M","L","XL","2XL","3XL"],
+    colors: ["Black","White"],
+    fabric: "100% Airlume combed and ring-spun cotton",
+    tag: "NEW",
+    cat: "Tops",
+    img: "products/barcode-boxy-black.jpg",
+    images: { Black: "products/barcode-boxy-black.jpg", White: "products/barcode-boxy-white.jpg" },
+    initial: "01"
+  },
+  {
+    id: "gt-classic-boxy",
+    slug: "gt-classic-boxy",
+    look: "02",
+    name: "GHOSTNAME\u00ae WORLDWIDE \u2014 Classic Boxy Tee",
+    price: { usd: 30 },
+    desc: "The icon. Bold GHOSTNAME\u00ae WORLDWIDE chest print.",
+    eyebrow: "GHOSTNAME\u00ae \u2014 ESSENTIALS",
+    note: "Bella+Canvas 3010 \u00b7 Unisex Oversized Boxy Tee",
+    surcharge: "+$2 for 2XL \u00b7 +$5 for 3XL",
+    sizes: ["XS","S","M","L","XL","2XL","3XL"],
+    colors: ["Black","White"],
+    fabric: "100% Airlume combed and ring-spun cotton",
+    tag: "NEW",
+    cat: "Tops",
+    img: "products/classic-boxy-black.jpg",
+    images: { Black: "products/classic-boxy-black.jpg", White: "products/classic-boxy-white.jpg" },
+    initial: "02"
+  },
+  {
+    id: "gt-faceless-boxy",
+    slug: "gt-faceless-boxy",
+    look: "03",
+    name: "GHOSTNAME\u00ae WORLDWIDE \u2014 Faceless Boxy Tee",
+    price: { usd: 30 },
+    desc: "No face, no fear. Minimal FACELESS. chest print.",
+    eyebrow: "GHOSTNAME\u00ae \u2014 ESSENTIALS",
+    note: "Bella+Canvas 3010 \u00b7 Unisex Oversized Boxy Tee",
+    surcharge: "+$2 for 2XL \u00b7 +$5 for 3XL",
+    sizes: ["XS","S","M","L","XL","2XL","3XL"],
+    colors: ["Black","White"],
+    fabric: "100% Airlume combed and ring-spun cotton",
+    tag: "NEW",
+    cat: "Tops",
+    img: "products/faceless-boxy-black.jpg",
+    images: { Black: "products/faceless-boxy-black.jpg", White: "products/faceless-boxy-white.jpg" },
+    initial: "03"
+  }
+];
 /* Editorial-only treatments (meta description, alt text) apply solely to
    editorial looks — never to the real product above. */
 const isFW26 = p => p && typeof p.id === "string" && p.id.indexOf("fw26-") === 0;
@@ -1482,8 +1542,12 @@ function openProduct(slug, e){
 
   /* Gallery: 6 slots, fixed order */
   const track = document.getElementById("galleryTrack");
-  track.innerHTML = GALLERY_LABELS.map((lbl, i) =>
-    `<div class="gallery-slide" data-idx="${i}">${galleryPlaceholder(lbl, altFor(p) + " — " + lbl)}</div>`).join("");
+  track.innerHTML = GALLERY_LABELS.map((lbl, i) => {
+    const photo = (i === 1 && p.img)
+      ? `<img class="gallery-photo" src="${esc(p.img)}" alt="${esc(altFor(p))}" loading="lazy">`
+      : galleryPlaceholder(lbl, altFor(p) + " \u2014 " + lbl);
+    return `<div class="gallery-slide" data-idx="${i}">${photo}</div>`;
+  }).join("");
   track.scrollLeft = 0;
   const thumbs = document.getElementById("galleryThumbs");
   thumbs.innerHTML = GALLERY_LABELS.map((lbl, i) =>
@@ -1594,6 +1658,8 @@ function pvSetSize(s){
 let pvColor = null;
 function pvSetColor(c){
   pvColor = c;
+  const frontImg = document.querySelector('#galleryTrack .gallery-slide[data-idx="1"] img.gallery-photo');
+  if (frontImg && pv && pv.images && pv.images[c]) frontImg.src = pv.images[c];
   document.querySelectorAll("#pvColors .color-chip").forEach(b => {
     const on = b.dataset.color === c;
     b.classList.toggle("active", on);
@@ -1709,7 +1775,7 @@ function renderLookbook(){
   }
   track.innerHTML = LOOKS.map((l, i) => `
     <div class="look look-hover-zone" data-cursor="VIEW" data-idx="${i}" role="group" aria-label="Look ${l.look}">
-      <div class="look-media">${galleryPlaceholder("LOOK " + l.look, altFor(l))}</div>
+      <div class="look-media">${l.img ? `<img class="look-photo" src="${esc(l.img)}" alt="${esc(altFor(l))}" loading="lazy">` : galleryPlaceholder("LOOK " + l.look, altFor(l))}</div>
       <div class="look-scrim"></div>
       <span class="look-index" aria-hidden="true">${l.look}</span>
       ${i === 0 ? '<span class="swipe-hint" id="swipeHint" aria-hidden="true">SWIPE →</span>' : ""}
