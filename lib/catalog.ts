@@ -31,10 +31,12 @@ export const VALID: SizeKey[] = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 
 /**
  * Retail surcharge for extended sizes. 2XL/3XL cost more to produce, so the
- * $39 base becomes $42 — the storefront must show the same math.
+ * $30 base becomes $32 (2XL) / $35 (3XL) — the storefront must show the same math.
  */
 export function sizePriceAdjust(size: SizeKey): number {
-  return size === "2XL" || size === "3XL" ? 3 : 0;
+  if (size === "2XL") return 2;
+  if (size === "3XL") return 5;
+  return 0;
 }
 
 /**

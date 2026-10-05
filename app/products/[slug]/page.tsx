@@ -105,14 +105,14 @@ export default async function ProductPage({
       ) : null}
       <p style={{ fontSize: 20, fontWeight: 600 }}>
         ${product.price.usd}
-        {hasPlusSizes ? " (+$3 for 2XL–3XL)" : ""}
+        {hasPlusSizes ? " (+$2 for 2XL · +$5 for 3XL)" : ""}
       </p>
       <p>{product.desc}</p>
       <p>Fabric: {product.fabric}</p>
       <p>Sizes: {product.sizes.join(", ")}</p>
       <p>Colors: {product.colors.join(", ")}</p>
       <p>
-        <Link href="/store.html#/product/gt-boxy-tee">
+        <Link href={`/store.html#/product/${product.id}`}>
           View in the lookbook
         </Link>
       </p>

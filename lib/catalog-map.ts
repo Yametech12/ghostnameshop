@@ -1,10 +1,14 @@
 /**
  * Printify mapping —— the bridge between storefront SKUs and Printify.
  *
- * Real product (Oct 2026): "GHOSTNAME® WORLDWIDE —— Minimalist Boxy Tee"
- * storefront id `gt-boxy-tee`, $39 base (+$3 for 2XL/3XL —— see sizePriceAdjust
- * in lib/catalog.ts). Bella+Canvas 3010 Unisex Oversized Boxy Tee via
- * Printify Choice, in shop "My new store" (4053686).
+ * Real products (Oct 2026) — Bella+Canvas 3010 Unisex Oversized Boxy Tee via
+ * Printify Choice, in shop "My new store" (4053686):
+ *   gt-barcode-boxy  "GHOSTNAME® WORLDWIDE — Barcode Boxy Tee"   6ac2f2dd648a20ba5a031598
+ *   gt-classic-boxy  "GHOSTNAME® WORLDWIDE — Classic Boxy Tee"   6ac2f2e2210cd1118005b3c7
+ *   gt-faceless-boxy "GHOSTNAME® WORLDWIDE — Faceless Boxy Tee"  6ac2f2e91eaed3057e02b810
+ *
+ * Retail: $30 base XS–XL (+$2 for 2XL, +$5 for 3XL — see sizePriceAdjust
+ * in lib/catalog.ts).
  *
  * Until a product is mapped here, checkout still works —— the order is
  * recorded as `manual_review` in the ledger instead of auto-fulfilled.
@@ -32,32 +36,47 @@ export interface PrintifyMapping {
 /** @deprecated Do not use as a silent default — color must come from the validated cart. */
 export const COLOR = "Black" as const;
 
-/** Colors offered for gt-boxy-tee (default first). */
+/** Colors offered for the boxy tees (default first). */
 export const COLORS = ["Black", "White"] as const;
 
+/** Shared Bella+Canvas 3010 variant table (Printify Choice catalog-level ids). */
+const BOXY_VARIANTS: PrintifyVariant[] = [
+  // Black —— Bella+Canvas 3010
+  { size: "XS", color: "Black", variantId: 103517, cost: 18.58 },
+  { size: "S", color: "Black", variantId: 103518, cost: 18.58 },
+  { size: "M", color: "Black", variantId: 103519, cost: 18.58 },
+  { size: "L", color: "Black", variantId: 103520, cost: 18.58 },
+  { size: "XL", color: "Black", variantId: 103521, cost: 18.58 },
+  { size: "2XL", color: "Black", variantId: 103522, cost: 19.45 },
+  { size: "3XL", color: "Black", variantId: 103523, cost: 21.45 },
+  // White —— Bella+Canvas 3010
+  { size: "XS", color: "White", variantId: 103545, cost: 18.58 },
+  { size: "S", color: "White", variantId: 103546, cost: 18.58 },
+  { size: "M", color: "White", variantId: 103547, cost: 18.58 },
+  { size: "L", color: "White", variantId: 103548, cost: 18.58 },
+  { size: "XL", color: "White", variantId: 103549, cost: 18.58 },
+  { size: "2XL", color: "White", variantId: 103550, cost: 19.45 },
+  { size: "3XL", color: "White", variantId: 103551, cost: 21.45 },
+];
+
 export const PRINTIFY: Record<string, PrintifyMapping> = {
-  "gt-boxy-tee": {
-    productId: "6ac1bbf23ef7a1f2b70e60fa",
+  "gt-barcode-boxy": {
+    productId: "6ac2f2dd648a20ba5a031598",
     blueprintId: 1382,
     printProviderId: 99,
-    variants: [
-      // Black —— Bella+Canvas 3010
-      { size: "XS", color: "Black", variantId: 103517, cost: 18.58 },
-      { size: "S", color: "Black", variantId: 103518, cost: 18.58 },
-      { size: "M", color: "Black", variantId: 103519, cost: 18.58 },
-      { size: "L", color: "Black", variantId: 103520, cost: 18.58 },
-      { size: "XL", color: "Black", variantId: 103521, cost: 18.58 },
-      { size: "2XL", color: "Black", variantId: 103522, cost: 19.45 },
-      { size: "3XL", color: "Black", variantId: 103523, cost: 19.45 },
-      // White —— Bella+Canvas 3010
-      { size: "XS", color: "White", variantId: 103545, cost: 18.58 },
-      { size: "S", color: "White", variantId: 103546, cost: 18.58 },
-      { size: "M", color: "White", variantId: 103547, cost: 18.58 },
-      { size: "L", color: "White", variantId: 103548, cost: 18.58 },
-      { size: "XL", color: "White", variantId: 103549, cost: 18.58 },
-      { size: "2XL", color: "White", variantId: 103550, cost: 19.45 },
-      { size: "3XL", color: "White", variantId: 103551, cost: 19.45 },
-    ],
+    variants: BOXY_VARIANTS,
+  },
+  "gt-classic-boxy": {
+    productId: "6ac2f2e2210cd1118005b3c7",
+    blueprintId: 1382,
+    printProviderId: 99,
+    variants: BOXY_VARIANTS,
+  },
+  "gt-faceless-boxy": {
+    productId: "6ac2f2e91eaed3057e02b810",
+    blueprintId: 1382,
+    printProviderId: 99,
+    variants: BOXY_VARIANTS,
   },
 };
 
