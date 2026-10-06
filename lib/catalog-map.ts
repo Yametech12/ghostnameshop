@@ -2,7 +2,7 @@
  * Printify mapping —— the bridge between storefront SKUs and Printify.
  *
  * Real product (Oct 2026): "GHOSTNAME® WORLDWIDE —— Minimalist Boxy Tee"
- * storefront id `gt-boxy-tee`, $39 base (+$3 for 2XL/3XL —— see sizePriceAdjust
+ * storefront id `gt-boxy-tee`, $30 base (+$2 for 2XL / +$5 for 3XL —— see sizePriceAdjust
  * in lib/catalog.ts). Bella+Canvas 3010 Unisex Oversized Boxy Tee via
  * Printify Choice, in shop "My new store" (4053686).
  *
