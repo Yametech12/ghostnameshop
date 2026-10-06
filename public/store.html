@@ -935,7 +935,7 @@ var NEWSLETTER_ACTION = "";
       <p class="body-copy reveal">The essential tee. Cut boxy from heavyweight 100% ring-spun cotton, with the GHOSTNAME® WORLDWIDE chest print. Nothing loud — the uniform underneath everything.</p>
       <ul class="featured-specs reveal">
         <li>Fabric: 100% ring-spun cotton, heavyweight</li>
-        <li>Fit: boxy. Sizes XS–3XL (+$3 for 2XL–3XL)</li>
+        <li>Fit: boxy. Sizes XS–3XL (+$2 for 2XL, +$5 for 3XL)</li>
         <li>GHOSTNAME® WORLDWIDE chest print</li>
       </ul>
       <a class="btn btn-dark reveal" href="#/product/gt-boxy-tee" onclick="openProduct('gt-boxy-tee',event)">VIEW PIECE <span aria-hidden="true">→</span></a>
@@ -1078,7 +1078,7 @@ var NEWSLETTER_ACTION = "";
         <button class="text-link" onclick="openSizeGuide(event)" style="color:var(--text)">Size Guide</button>
       </div>
       <div class="size-chips" id="pvSizes" role="radiogroup" aria-labelledby="sizeLabel"></div>
-      <p class="small muted" id="pvSizeNote" style="margin-top:8px">+$3 for 2XL–3XL</p>
+      <p class="small muted" id="pvSizeNote" style="margin-top:8px">+$2 for 2XL, +$5 for 3XL</p>
       <div class="pv-size-row" style="margin-top:16px">
         <span class="label" id="colorLabel">COLOR</span>
       </div>
@@ -1205,7 +1205,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&
    Prices are USD-final; currency keys fall back to USD for display.
    Slugs are lowercase-hyphenated. Merges into ALL at boot so
    cart/search/wishlist resolve; /checkout re-prices by id.
-   NOTE: 2XL/3XL carry a +$3 surcharge applied server-side.
+   NOTE: 2XL/3XL carry a +$2 (2XL) / +$5 (3XL) surcharge applied server-side.
    ============================================================ */
 const LOOKS = [
   { id:"gt-boxy-tee", slug:"gt-boxy-tee", look:"01",
@@ -1218,7 +1218,7 @@ const LOOKS = [
     images:{ Black:"assets/images/ghost-tee-black.webp", White:"assets/images/ghost-tee-white.webp" },
     eyebrow:"GHOSTNAME® — ESSENTIALS",
     note:"100% ring-spun cotton. Boxy fit.",
-    surcharge:"+$3 for 2XL–3XL" }
+    surcharge:"+$2 for 2XL, +$5 for 3XL" }
 ];
 /* Editorial-only treatments (meta description, alt text) apply solely to
    editorial looks — never to the real product above. */
