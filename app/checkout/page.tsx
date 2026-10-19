@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 interface CheckoutItem {
   id: string;
   size: string;
-  /** Color name matching the catalog (e.g. "Black", "White"). Required — never defaulted. */
+  /** Color name matching the catalog (e.g. "Black", "White"). Required, never defaulted. */
   color: string;
   qty: number;
 }
@@ -134,7 +134,7 @@ const LazyPayPalSection = dynamic<PayPalSectionProps>(
               onCancel={onCancel}
               onError={() =>
                 onError(
-                  "We couldn't confirm your payment. If you were charged, contact support — do not retry."
+                  "We couldn't confirm your payment. If you were charged, contact support, do not retry."
                 )
               }
             />
@@ -180,7 +180,7 @@ export default function CheckoutPage() {
   const loadCart = useCallback((): CheckoutItem[] | null => {
     // Strict cart hygiene: id, size (XS–3XL whitelist), color (validated like the
     // server), and qty > 0 are ALL required. Legacy or corrupt entries missing
-    // color are rejected outright — never silently defaulted — so the server
+    // color are rejected outright, never silently defaulted, so the server
     // never 400s on a colorless line and the wrong variant can never ship.
     const VALID_SIZES = new Set(["XS", "S", "M", "L", "XL", "2XL", "3XL"]);
     const COLOR_RE = /^[A-Za-z ]{1,20}$/;
@@ -347,8 +347,8 @@ export default function CheckoutPage() {
   );
 
   const handleCancel = useCallback(() => {
-    // Cart is intentionally kept — the customer can retry or edit.
-    setError("Payment cancelled — your cart is kept.");
+    // Cart is intentionally kept, the customer can retry or edit.
+    setError("Payment cancelled, your cart is kept.");
   }, []);
 
   if (done) return <DoneView status={done.status} printify={done.printify} />;
@@ -464,7 +464,7 @@ function Summary({
             label="Worldwide express shipping"
             value={totals.shipping === 0 ? "FREE" : money(totals.shipping)}
           />
-          <Row label="Total — charged in USD" value={money(totals.total)} strong />
+          <Row label="Total, charged in USD" value={money(totals.total)} strong />
           <p style={{ color: "#8a8a90", fontSize: 12, lineHeight: 1.6, marginTop: 18 }}>
             You&apos;ll enter your shipping address inside PayPal. Duties are prepaid;
             tracked courier dispatch worldwide.

@@ -2,18 +2,18 @@ import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
   title: {
-    default: "GHOSTNAME® — Luxury Streetwear | FW26",
-    template: "%s — GHOSTNAME®",
+    default: "GHOSTNAME®, Luxury Streetwear | FW26",
+    template: "%s, GHOSTNAME®",
   },
   description:
-    "FW26 first delivery from GHOSTNAME® — heavyweight streetwear silhouettes cut for the unseen. Shop the collection with worldwide shipping.",
+    "FW26 first delivery from GHOSTNAME®, heavyweight streetwear silhouettes cut for the unseen. Shop the collection with worldwide shipping.",
   metadataBase: new URL("https://ghostnameworldwide.com"),
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://ghostnameworldwide.com/",
     siteName: "GHOSTNAME®",
-    title: "GHOSTNAME® — Luxury Streetwear | FW26",
+    title: "GHOSTNAME®, Luxury Streetwear | FW26",
     description:
       "FW26 first delivery. Heavyweight silhouettes, cut for the unseen. Shop the GHOSTNAME® collection.",
     images: [
@@ -21,14 +21,14 @@ export const metadata: Metadata = {
         url: "/og-image",
         width: 1200,
         height: 630,
-        alt: "GHOSTNAME® — Luxury Streetwear | FW26",
+        alt: "GHOSTNAME®, Luxury Streetwear | FW26",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@ghostnameworldwide",
-    title: "GHOSTNAME® — Luxury Streetwear | FW26",
+    title: "GHOSTNAME®, Luxury Streetwear | FW26",
     description:
       "FW26 first delivery. Heavyweight silhouettes, cut for the unseen. Shop the GHOSTNAME® collection.",
     images: ["https://ghostnameworldwide.com/og-image"],
