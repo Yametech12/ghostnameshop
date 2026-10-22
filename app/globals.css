@@ -1,0 +1,76 @@
+/* Shared tokens + self-hosted fonts for the Next.js pages (checkout, thank-you,
+   admin, product). The legacy pages loaded neither Inter nor "Space Grotesk",
+   so they silently rendered in the browser's fallback sans-serif. */
+@font-face {
+  font-family: Anton;
+  src: url("/assets/fonts/anton-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Inter;
+  src: url("/assets/fonts/inter-var.woff2") format("woff2");
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+:root {
+  --bg: #070807;
+  --panel: #0e100e;
+  --line: #232823;
+  --txt: #f2f3ef;
+  --mut: #9aa39c;
+  --acc: #2fe673;
+  --acc-ink: #06130a;
+  --font-display: Anton, Impact, "Arial Narrow", sans-serif;
+  --font-body: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 3px;
+}
+
+.gn-btn-ghost {
+  background: transparent;
+  border: 1px solid #3a403a;
+  color: var(--txt);
+  padding: 12px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.gn-btn-ghost:hover {
+  border-color: var(--acc);
+  color: var(--acc);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

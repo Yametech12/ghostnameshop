@@ -67,66 +67,46 @@ interface PayPalSectionProps {
 /**
  * PayPal SDK bundle is lazy-loaded client-side only (ssr: false) so the
  * heavy script never blocks the initial checkout render.
+ *
+ * BUG FIX: the previous version called `usePayPalScriptReducer()` in the SAME
+ * component that rendered `<PayPalScriptProvider>`. That hook only works for
+ * components rendered INSIDE the provider, so it threw on mount and the PayPal
+ * buttons never appeared. The provider now wraps a child (`Buttons`) that owns
+ * the hook, and a retry remounts the provider through `key`.
  */
 const LazyPayPalSection = dynamic<PayPalSectionProps>(
   () =>
     import("@paypal/react-paypal-js").then(
       (mod): { default: ComponentType<PayPalSectionProps> } => {
-      function PayPalSection({
-        clientId,
-        onCreateOrder,
-        onApprove,
-        onCancel,
-        onError,
-      }: PayPalSectionProps) {
-        const [{ isResolved, isRejected }] = mod.usePayPalScriptReducer();
-        const [scriptAttempt, setScriptAttempt] = useState(0);
+        function Buttons({
+          onCreateOrder,
+          onApprove,
+          onCancel,
+          onError,
+          onRetry,
+        }: Omit<PayPalSectionProps, "clientId"> & { onRetry: () => void }) {
+          const [{ isResolved, isRejected }] = mod.usePayPalScriptReducer();
 
-        if (isRejected) {
-          return (
-            <div>
-              <p
-                role="alert"
-                style={{ fontSize: 13, color: "#e5484d", marginTop: 14, lineHeight: 1.6 }}
-              >
-                PayPal failed to load. Check your connection and try again.
+          if (isRejected) {
+            return (
+              <div>
+                <p role="alert" style={{ fontSize: 13, color: "#ff7a7a", marginTop: 14, lineHeight: 1.6 }}>
+                  PayPal failed to load. Check your connection and try again.
+                </p>
+                <button type="button" onClick={onRetry} className="gn-btn-ghost" style={{ marginTop: 10 }}>
+                  Retry
+                </button>
+              </div>
+            );
+          }
+          if (!isResolved) {
+            return (
+              <p role="status" style={{ fontSize: 13, color: "var(--mut)", marginTop: 14 }}>
+                Loading secure payment…
               </p>
-              <button
-                type="button"
-                onClick={() => setScriptAttempt((a) => a + 1)}
-                style={{
-                  marginTop: 10,
-                  background: "transparent",
-                  border: "1px solid rgba(255,255,255,0.25)",
-                  color: "#f2f2f0",
-                  padding: "12px 20px",
-                  borderRadius: 4,
-                  cursor: "pointer",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  letterSpacing: 1,
-                  textTransform: "uppercase",
-                }}
-              >
-                Retry
-              </button>
-            </div>
-          );
-        }
-
-        if (!isResolved) {
+            );
+          }
           return (
-            <p style={{ fontSize: 13, color: "#8a8a90", marginTop: 14 }}>
-              Loading secure payment…
-            </p>
-          );
-        }
-
-        return (
-          <mod.PayPalScriptProvider
-            key={scriptAttempt}
-            options={{ clientId, currency: "USD", intent: "capture" }}
-          >
             <mod.PayPalButtons
               style={{ layout: "vertical", shape: "rect", color: "gold", label: "paypal" }}
               createOrder={onCreateOrder}
@@ -134,19 +114,31 @@ const LazyPayPalSection = dynamic<PayPalSectionProps>(
               onCancel={onCancel}
               onError={() =>
                 onError(
-                  "We couldn't confirm your payment. If you were charged, contact support, do not retry."
+                  "We couldn't confirm your payment. If you were charged, contact support and do not retry."
                 )
               }
             />
-          </mod.PayPalScriptProvider>
-        );
+          );
+        }
+
+        function PayPalSection({ clientId, ...handlers }: PayPalSectionProps) {
+          const [attempt, setAttempt] = useState(0);
+          return (
+            <mod.PayPalScriptProvider
+              key={attempt}
+              options={{ clientId, currency: "USD", intent: "capture" }}
+            >
+              <Buttons {...handlers} onRetry={() => setAttempt((a) => a + 1)} />
+            </mod.PayPalScriptProvider>
+          );
+        }
+        return { default: PayPalSection };
       }
-      return { default: PayPalSection };
-    }),
+    ),
   {
     ssr: false,
     loading: () => (
-      <p style={{ fontSize: 13, color: "#8a8a90", marginTop: 14 }}>
+      <p role="status" style={{ fontSize: 13, color: "var(--mut)", marginTop: 14 }}>
         Loading secure payment…
       </p>
     ),
@@ -389,23 +381,24 @@ function Header() {
   return (
     <div>
       <a
-        href="/store.html"
-        style={{ color: "#8a8a90", fontSize: 12, letterSpacing: 2, textDecoration: "none" }}
+        href="/"
+        style={{ color: "var(--mut)", fontSize: 12, letterSpacing: 2, textDecoration: "none" }}
       >
         &larr; BACK TO STOREFRONT
       </a>
       <h1
         style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontWeight: 900,
-          letterSpacing: -1,
+          fontFamily: "var(--font-display)",
+          fontWeight: 400,
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
           fontSize: "clamp(1.8rem, 4vw, 2.6rem)",
           margin: "14px 0 4px",
         }}
       >
         SECURE CHECKOUT
       </h1>
-      <p style={{ color: "#8a8a90", fontSize: 13, letterSpacing: 1 }}>
+      <p style={{ color: "var(--mut)", fontSize: 13, letterSpacing: 1 }}>
         FACELESS. FEARLESS. FOREVER. &mdash; ALL PRICES IN USD
       </p>
     </div>
@@ -426,14 +419,14 @@ function Summary({
       style={{
         border: "1px solid rgba(255,255,255,0.09)",
         padding: 24,
-        background: "#121215",
+        background: "var(--panel)",
       }}
     >
-      <h2 style={{ fontSize: 13, letterSpacing: 2, color: "#8a8a90", margin: 0 }}>
+      <h2 style={{ fontSize: 13, letterSpacing: 2, color: "var(--mut)", margin: 0 }}>
         ORDER REVIEW
       </h2>
       {error && (
-        <p role="alert" style={{ color: "#e5484d", fontSize: 13, marginTop: 14 }}>{error}</p>
+        <p role="alert" style={{ color: "#ff7a7a", fontSize: 13, marginTop: 14 }}>{error}</p>
       )}
       {totals && (
         <>
@@ -451,7 +444,7 @@ function Summary({
             >
               <span>
                 {l.name}
-                <span style={{ color: "#8a8a90" }}>
+                <span style={{ color: "var(--mut)" }}>
                   {" "}
                   &middot; {l.color}, {l.size} &times; {l.qty}
                 </span>
@@ -461,13 +454,14 @@ function Summary({
           ))}
           <Row label="Subtotal" value={money(totals.subtotal)} />
           <Row
-            label="Worldwide express shipping"
+            label="Shipping (tracked, worldwide)"
             value={totals.shipping === 0 ? "FREE" : money(totals.shipping)}
           />
           <Row label="Total, charged in USD" value={money(totals.total)} strong />
-          <p style={{ color: "#8a8a90", fontSize: 12, lineHeight: 1.6, marginTop: 18 }}>
-            You&apos;ll enter your shipping address inside PayPal. Duties are prepaid;
-            tracked courier dispatch worldwide.
+          <p style={{ color: "var(--mut)", fontSize: 12, lineHeight: 1.6, marginTop: 18 }}>
+            You&apos;ll enter your shipping address inside PayPal. Import duties and
+            taxes, if any, are set by your country&apos;s customs and are not included
+            in this total.
           </p>
         </>
       )}
@@ -495,7 +489,7 @@ function Row({
         borderBottom: strong ? "none" : "1px solid rgba(255,255,255,0.07)",
       }}
     >
-      <span style={{ color: strong ? "#f2f2f0" : "#8a8a90" }}>{label}</span>
+      <span style={{ color: strong ? "#f2f2f0" : "var(--mut)" }}>{label}</span>
       <span>{value}</span>
     </div>
   );
@@ -504,7 +498,7 @@ function Row({
 const paySectionStyle: React.CSSProperties = {
   border: "1px solid rgba(255,255,255,0.09)",
   padding: 24,
-  background: "#121215",
+  background: "var(--panel)",
 };
 
 function PayArea({
@@ -527,13 +521,11 @@ function PayArea({
   if (!clientId) {
     return (
       <section style={paySectionStyle}>
-        <h2 style={{ fontSize: 13, letterSpacing: 2, color: "#8a8a90", margin: 0 }}>
+        <h2 style={{ fontSize: 13, letterSpacing: 2, color: "var(--mut)", margin: 0 }}>
           PAYMENT
         </h2>
         <p style={{ fontSize: 13, color: "#e5b454", marginTop: 14, lineHeight: 1.6 }}>
-          Checkout is not configured yet &mdash; set NEXT_PUBLIC_PAYPAL_CLIENT_ID in
-          Settings &rarr; Environment (plus PayPal, Printify and Upstash keys) to
-          enable it.
+          Checkout is temporarily unavailable. Please try again shortly.
         </p>
       </section>
     );
@@ -543,10 +535,10 @@ function PayArea({
     if (!loading) return null;
     return (
       <section style={paySectionStyle} aria-busy="true">
-        <h2 style={{ fontSize: 13, letterSpacing: 2, color: "#8a8a90", margin: 0 }}>
+        <h2 style={{ fontSize: 13, letterSpacing: 2, color: "var(--mut)", margin: 0 }}>
           PAYMENT
         </h2>
-        <p role="status" style={{ fontSize: 13, color: "#8a8a90", marginTop: 14 }}>
+        <p role="status" style={{ fontSize: 13, color: "var(--mut)", marginTop: 14 }}>
           Preparing your order…
         </p>
         <div aria-hidden="true" style={{ display: "grid", gap: 10, marginTop: 12 }}>
@@ -559,12 +551,11 @@ function PayArea({
 
   return (
     <section style={paySectionStyle}>
-      <h2 style={{ fontSize: 13, letterSpacing: 2, color: "#8a8a90", margin: 0 }}>
+      <h2 style={{ fontSize: 13, letterSpacing: 2, color: "var(--mut)", margin: 0 }}>
         PAYMENT
       </h2>
-      <p style={{ fontSize: 12, color: "#8a8a90", marginTop: 10, lineHeight: 1.6 }}>
-        Pay with PayPal balance or any debit/credit card &mdash; no PayPal account
-        needed.
+      <p style={{ fontSize: 12, color: "var(--mut)", marginTop: 10, lineHeight: 1.6 }}>
+        Pay with PayPal or, where PayPal offers it, a debit or credit card.
       </p>
       <LazyPayPalSection
         clientId={clientId}
@@ -592,15 +583,16 @@ function DoneView({ status, printify }: { status: string; printify?: string }) {
         <div style={{ fontSize: 42, marginBottom: 8 }}>&#10003;</div>
         <h1
           style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 900,
-            letterSpacing: -0.5,
+            fontFamily: "var(--font-display)",
+            fontWeight: 400,
+            letterSpacing: "0.04em",
+            textTransform: "uppercase",
             fontSize: "1.8rem",
           }}
         >
           ORDER CONFIRMED
         </h1>
-        <p style={{ color: "#8a8a90", fontSize: 14, lineHeight: 1.7, marginTop: 12 }}>
+        <p style={{ color: "var(--mut)", fontSize: 14, lineHeight: 1.7, marginTop: 12 }}>
           Payment received. Your pieces are being prepared &mdash; dispatch tracking
           is on its way to your email.
           {printify ? ` Fulfillment reference: ${printify}.` : ""}
@@ -609,12 +601,12 @@ function DoneView({ status, printify }: { status: string; printify?: string }) {
             : ""}
         </p>
         <a
-          href="/store.html"
+          href="/"
           style={{
             display: "inline-block",
             marginTop: 22,
-            background: "#8a4b3a",
-            color: "#fff",
+            background: "var(--acc)",
+            color: "#06130a",
             padding: "14px 32px",
             letterSpacing: 2,
             fontSize: 12,

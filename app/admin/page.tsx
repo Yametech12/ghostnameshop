@@ -30,7 +30,7 @@ export default async function AdminPage() {
         <div style={{ textAlign: "center" }}>
           <h1 style={{ fontSize: 28, marginBottom: 8 }}>GHOSTNAME Admin</h1>
           <p style={{ color: "#8a8a90", marginBottom: 20 }}>Not signed in.</p>
-          <Link href="/admin/login" style={{ color: "#8a4b3a" }}>Go to login →</Link>
+          <Link href="/admin/login" style={{ color: "#2fe673" }}>Go to login →</Link>
         </div>
       </main>
     );
@@ -89,7 +89,7 @@ export default async function AdminPage() {
           <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 140, borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: 4 }}>
             {stats.days.map((d) => (
               <div key={d.day} style={{ flex: 1, textAlign: "center" }} title={`${d.day}: ${money(d.revenue)} · ${d.orders} orders`}>
-                <div style={{ height: `${Math.max(2, (d.revenue / maxDay) * 110)}px`, background: d.revenue > 0 ? "#8a4b3a" : "rgba(255,255,255,0.08)", borderRadius: 3, marginBottom: 6 }} />
+                <div style={{ height: `${Math.max(2, (d.revenue / maxDay) * 110)}px`, background: d.revenue > 0 ? "#2fe673" : "rgba(255,255,255,0.08)", borderRadius: 3, marginBottom: 6 }} />
                 <div style={{ fontSize: 9, color: "#9a9aa0", transform: "rotate(-45deg)" }}>{d.day.slice(5)}</div>
               </div>
             ))}
@@ -206,14 +206,14 @@ function ProductCard({ p }: { p: Awaited<ReturnType<typeof loadAdminCatalog>>[nu
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <input name="price" aria-label="Product price" type="number" step="0.01" min="0" defaultValue={p.price} placeholder="Price USD" style={inputStyle} />
+          <input name="price" aria-label="Product price" type="number" step="0.01" min="0.01" defaultValue={p.price} placeholder="Price USD" style={inputStyle} />
         </div>
         <input name="fabric" aria-label="Product fabric" defaultValue={p.fabric} placeholder="Fabric" style={inputStyle} />
         <input name="tag" aria-label="Product tag" defaultValue={p.tag} placeholder="Tag (NEW / LIMITED / empty)" style={inputStyle} />
         <label style={{ fontSize: 12, color: "#8a8a90", display: "flex", gap: 8, alignItems: "center" }}>
           <input type="checkbox" name="soldOut" defaultChecked={p.soldOut} style={{ width: 20, height: 20 }} /> Sold out
         </label>
-        <button type="submit" style={{ background: "#8a4b3a", color: "#fff", border: "none", padding: "10px", borderRadius: 4, cursor: "pointer", fontWeight: 700, fontSize: 12, letterSpacing: 1, textTransform: "uppercase", minHeight: 44 }}>
+        <button type="submit" style={{ background: "#2fe673", color: "#06130a", border: "none", padding: "10px", borderRadius: 4, cursor: "pointer", fontWeight: 700, fontSize: 12, letterSpacing: 1, textTransform: "uppercase", minHeight: 44 }}>
           Save
         </button>
       </form>

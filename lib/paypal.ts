@@ -6,14 +6,30 @@ import { toMoney } from "./pricing";
 import type { ResolvedCart } from "./types";
 
 const LIVE_BASE = "https://api-m.paypal.com";
-const BASE = process.env.PAYPAL_API_BASE || "https://api-m.sandbox.paypal.com";
+const SANDBOX_BASE = "https://api-m.sandbox.paypal.com";
 
-// Sandbox guard: in production the API base MUST be the live endpoint.
-// A sandbox base in production would create fake orders against real checkouts.
-if (process.env.NODE_ENV === "production" && BASE !== LIVE_BASE) {
-  throw new Error(
-    `PAYPAL_API_BASE must be the live endpoint (${LIVE_BASE}) in production — refusing to boot against ${BASE}`
-  );
+/**
+ * Resolve the API base at REQUEST time, not import time.
+ *
+ * Why: `next build` runs with NODE_ENV=production and imports every route
+ * module. A module-level guard made the build crash whenever PAYPAL_API_BASE
+ * was unset or still sandbox (CI, preview deploys). The safety rule is kept:
+ * a real production deploy (VERCEL_ENV=production, or NODE_ENV=production on
+ * any other host without an explicit sandbox opt-in) must never talk to the
+ * sandbox. Set PAYPAL_ALLOW_SANDBOX=1 on staging hosts that run NODE_ENV=production.
+ */
+function apiBase(): string {
+  const base = process.env.PAYPAL_API_BASE || SANDBOX_BASE;
+  const isProd =
+    process.env.VERCEL_ENV !== undefined
+      ? process.env.VERCEL_ENV === "production"
+      : process.env.NODE_ENV === "production";
+  if (isProd && base !== LIVE_BASE && process.env.PAYPAL_ALLOW_SANDBOX !== "1") {
+    throw new Error(
+      `PAYPAL_API_BASE must be the live endpoint (${LIVE_BASE}) in production — refusing to talk to ${base}`
+    );
+  }
+  return base;
 }
 
 /** Hard timeout per PayPal HTTP call — a hung PayPal must never hang our route. */
@@ -70,7 +86,7 @@ async function fetchNewToken(): Promise<string> {
   const secret = process.env.PAYPAL_CLIENT_SECRET;
   if (!id || !secret) throw new Error("PayPal credentials missing (PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET)");
   const auth = Buffer.from(`${id}:${secret}`).toString("base64");
-  const res = await fetchWithRetry(`${BASE}/v1/oauth2/token`, {
+  const res = await fetchWithRetry(`${apiBase()}/v1/oauth2/token`, {
     method: "POST",
     headers: {
       Authorization: `Basic ${auth}`,
@@ -102,7 +118,7 @@ async function getAccessToken(): Promise<string> {
 
 async function paypalFetch(path: string, init: RequestInit, retryOn401 = true): Promise<unknown> {
   const token = await getAccessToken();
-  const res = await fetchWithRetry(`${BASE}${path}`, {
+  const res = await fetchWithRetry(`${apiBase()}${path}`, {
     ...init,
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", ...(init.headers || {}) },
   });
@@ -137,7 +153,7 @@ export async function createPayPalOrder(resolved: ResolvedCart, ledgerKey: strin
       {
         reference_id: "default",
         custom_id: ledgerKey,
-        description: "GHOSTNAME WORLDWIDE \u2014 Minimalist Boxy Tee",
+        description: "GHOSTNAME WORLDWIDE order",
         amount: { currency_code: "USD", value: toMoney(resolved.total), breakdown: {
           item_total: { currency_code: "USD", value: toMoney(resolved.subtotal) },
           shipping: { currency_code: "USD", value: toMoney(resolved.shipping) },
@@ -211,7 +227,7 @@ export async function getPayPalOrder(orderId: string): Promise<PayPalCaptureResu
 export async function verifyWebhook(headers: Headers, rawBody: string): Promise<boolean> {
   const webhookId = process.env.PAYPAL_WEBHOOK_ID;
   if (!webhookId) throw new Error("PAYPAL_WEBHOOK_ID missing");
-  const res = await fetchWithRetry(`${BASE}/v1/notifications/verify-webhook-signature`, {
+  const res = await fetchWithRetry(`${apiBase()}/v1/notifications/verify-webhook-signature`, {
     method: "POST",
     headers: { Authorization: `Bearer ${await getAccessToken()}`, "Content-Type": "application/json" },
     body: JSON.stringify({

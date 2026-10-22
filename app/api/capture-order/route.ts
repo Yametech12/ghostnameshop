@@ -78,13 +78,32 @@ export async function POST(request: Request) {
   if (!rec) {
     return NextResponse.json({ error: "Unknown checkout session" }, { status: 404 });
   }
-  if (rec.status === "paid" || rec.status === "fulfilled" || rec.status === "fulfilling") {
+  if (rec.status === "fulfilled" || rec.status === "fulfilling") {
     return NextResponse.json({ ok: true, status: rec.status });
   }
+  // BUG FIX: "paid" used to short-circuit here as success. A PENDING capture is
+  // also stored as "paid", so a retry told the customer "confirmed" while no
+  // fulfillment ever started. Only a COMPLETED payment may resume fulfillment;
+  // fulfillOrder() claims the order atomically, so this cannot double-fulfill.
+  if (rec.status === "paid" && rec.paypal?.status === "COMPLETED") {
+    const resumed = await fulfillOrder(
+      rec,
+      ppOrder.purchase_units?.[0]?.shipping,
+      ppOrder.payer?.email_address ?? rec.paypal.payerEmail ?? ""
+    );
+    return NextResponse.json({
+      ok: true,
+      status: resumed.ok ? "fulfilled" : "manual_review",
+      printifyOrderId: resumed.printifyOrderId,
+    });
+  }
 
-  let capture;
+  // If PayPal already completed this order (a retry after a pending/timeout),
+  // use its state instead of capturing again, which would fail with
+  // ORDER_ALREADY_CAPTURED.
+  let capture: Awaited<ReturnType<typeof capturePayPalOrder>>;
   try {
-    capture = await capturePayPalOrder(orderId);
+    capture = ppOrder.status === "COMPLETED" ? ppOrder : await capturePayPalOrder(orderId);
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
     console.error("[capture-order] capture failed", orderId, detail);

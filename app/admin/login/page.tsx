@@ -78,8 +78,8 @@ export default async function AdminLoginPage({
           type="submit"
           style={{
             width: "100%",
-            background: "#8a4b3a",
-            color: "#fff",
+            background: "#2fe673",
+            color: "#06130a",
             border: "none",
             padding: 12,
             borderRadius: 4,

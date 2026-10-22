@@ -25,8 +25,7 @@ app/api/paypal-webhook  ←  PayPal server-to-server events (signature-verified)
             └─► manual_review status if anything fails — no lost payments
 ```
 
-- `public/store.html` — the original static storefront, preserved 1:1 (Snipcart
-  retired; cart is size-aware; hand-off to `/checkout`).
+- `public/store.html` — the storefront (WebGL hero, accessible cart, prices refreshed from `/api/products`; hand-off to `/checkout`). Served at `/` by a rewrite in `next.config.mjs`.
 - `app/api/*` — Node-runtime routes: create-order, capture-order, webhook.
 - `lib/catalog.ts` — server re-pricing; never trusts client prices.
 - `lib/catalog-map.ts` — **fill this in**: Printify product/variant ids.
@@ -46,7 +45,8 @@ Set in **Settings → Environment** (sandbox) and in deploy env vars (production
 | `PRINTIFY_API_TOKEN` / `PRINTIFY_SHOP_ID` | Printify API access |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Order ledger (free tier OK) |
 | `NEXT_PUBLIC_APP_URL` | Public base URL for PayPal return/cancel |
-| `ADMIN_DASHBOARD_KEY` | Password for `/admin` (min 8 chars) |
+| `ADMIN_DASHBOARD_KEY` | Password for `/admin` (min 32 chars; sessions are signed and expire after 12h) |
+| `PAYPAL_ALLOW_SANDBOX` | Set `1` only on a staging host that runs `NODE_ENV=production` against the PayPal sandbox |
 
 ## Setup steps
 

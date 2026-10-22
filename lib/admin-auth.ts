@@ -1,21 +1,24 @@
 /**
  * Admin dashboard auth — single shared key (ADMIN_DASHBOARD_KEY).
  *
- * The browser holds an httpOnly cookie whose value is sha256(key): the raw
- * key never travels after login, and the server can verify the cookie without
- * storing session state. For API routes, `Authorization: Bearer <raw key>`
- * is also accepted (handy for scripts/curl).
+ * The browser holds an httpOnly cookie shaped `<expiresAtMs>.<hmac>`, where the
+ * HMAC is keyed by ADMIN_DASHBOARD_KEY. The raw key never travels after login,
+ * the server verifies the cookie without session storage, and every cookie
+ * EXPIRES on its own. (The old cookie was a bare sha256(key): identical for every
+ * login, never expiring server-side, so a leaked cookie stayed valid until the key
+ * was rotated.) Rotating ADMIN_DASHBOARD_KEY still revokes every session at once.
+ * For API routes, `Authorization: Bearer <raw key>` is also accepted.
  *
  * The key must be ≥ 32 chars — a weak key throws at boot rather than
  * silently running.
  */
-import { createHash, timingSafeEqual } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const ADMIN_COOKIE = "gn_admin";
 
-/** sha256 of the configured key — safe to store in a cookie. */
-function cookieToken(): string {
-  return createHash("sha256").update(adminKey()).digest("hex");
+/** HMAC of an expiry timestamp, keyed by the admin key — safe to store in a cookie. */
+function sign(expiresAt: string): string {
+  return createHmac("sha256", adminKey()).update(`gn-admin-session:${expiresAt}`).digest("hex");
 }
 
 function adminKey(): string {
@@ -49,18 +52,25 @@ export function verifyAdminKey(candidate: string | null | undefined): boolean {
   }
 }
 
-/** Verify a cookie token (sha256 of the configured key). */
+/** Verify a session cookie: well-formed, not expired, signature matches. */
 export function verifyAdminCookie(token: string | null | undefined): boolean {
   if (!token) return false;
+  const dot = token.indexOf(".");
+  if (dot < 1) return false;
+  const expiresAt = token.slice(0, dot);
+  const sig = token.slice(dot + 1);
+  if (!/^\d{10,15}$/.test(expiresAt) || Number(expiresAt) <= Date.now()) return false;
   try {
-    return safeEqual(token, cookieToken());
+    return safeEqual(sig, sign(expiresAt));
   } catch {
     return false;
   }
 }
 
+/** Fresh session cookie value, valid for ADMIN_COOKIE_MAX_AGE seconds. */
 export function cookieValue(): string {
-  return cookieToken();
+  const expiresAt = String(Date.now() + ADMIN_COOKIE_MAX_AGE * 1000);
+  return `${expiresAt}.${sign(expiresAt)}`;
 }
 
 export function authConfigured(): boolean {

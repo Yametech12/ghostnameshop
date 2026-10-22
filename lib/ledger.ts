@@ -9,6 +9,7 @@
  * Race safety (#94): status transitions are atomic compare-and-set via a
  * Redis Lua script. Only these transitions are legal:
  *   created → paid → fulfilling → fulfilled
+ *   paid → paid  (refresh PayPal fields when a PENDING capture completes)
  *   any → manual_review
  *   manual_review → paid | fulfilling   (admin retry via retryFromManualReview)
  * A concurrent double-capture/webhook race can therefore never downgrade a
@@ -115,6 +116,9 @@ local ok = false
 if to == "manual_review" then
   ok = true
 elseif from == "created" and to == "paid" then
+  ok = true
+elseif from == "paid" and to == "paid" then
+  -- idempotent refresh: a PENDING capture later completes (record the new PayPal state)
   ok = true
 elseif from == "paid" and to == "fulfilling" then
   ok = true

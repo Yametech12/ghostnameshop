@@ -9,8 +9,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "optimize:images": "node scripts/optimize-images.mjs",
-    "og": "python3 scripts/generate_og_image.py",
-    "lint": "next lint"
+    "og": "python3 scripts/generate_og_image.py"
   },
   "dependencies": {
     "@paypal/react-paypal-js": "^8.7.0",

@@ -36,7 +36,7 @@ function sanitize(doc: unknown): Partial<ProductDoc> | null {
   }
   if (typeof d.tag === "string") out.tag = stripTags(d.tag.trim()).slice(0, 24);
   if (typeof d.fabric === "string") out.fabric = stripTags(d.fabric.trim()).slice(0, 40);
-  if (typeof d.price === "number" && Number.isFinite(d.price) && d.price >= 0 && d.price <= 10000) {
+  if (typeof d.price === "number" && Number.isFinite(d.price) && d.price > 0 && d.price <= 10000) {
     out.price = Math.round(d.price * 100) / 100;
   }
   if (typeof d.soldOut === "boolean") out.soldOut = d.soldOut;

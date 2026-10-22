@@ -83,17 +83,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true, note: "no ledger record — flagged in logs" });
     }
 
-    // Idempotent: already paid/fulfilled → ack.
-    if (rec.status === "paid" || rec.status === "fulfilling" || rec.status === "fulfilled") {
+    // Idempotent: in-flight / done → ack. NOTE: "paid" is only final when the
+    // capture was COMPLETED. A PENDING capture is stored as "paid" too, and this
+    // very event is the one that completes it — it must continue to fulfillment
+    // (fulfillOrder's atomic claim makes a duplicate delivery harmless).
+    const settled = rec.status === "fulfilling" || rec.status === "fulfilled" ||
+      (rec.status === "paid" && rec.paypal?.status === "COMPLETED") ||
+      // A recorded amount mismatch must never auto-fulfill; it waits for a human.
+      rec.paypal?.status === "AMOUNT_MISMATCH";
+    if (settled) {
       if (!rec.paypal.captureId && captureId) await attachCapture(key, captureId).catch(() => {});
       return NextResponse.json({ ok: true, status: rec.status });
     }
 
     // Cross-check amount against PayPal's own record of the order.
+    // A capture webhook carries no shipping address, so also take the address
+    // and payer email from the PayPal order itself. Without this a webhook-first
+    // fulfillment sent Printify an empty address and always landed in manual_review.
     const orderId = String((resource.supplementary_data as { related_ids?: { order_id?: string } } | undefined)?.related_ids?.order_id ?? "");
+    let orderShipping: Parameters<typeof fulfillOrder>[1];
+    let orderPayerEmail = "";
     if (orderId) {
       try {
         const pp = await getPayPalOrder(orderId);
+        orderShipping = pp.purchase_units?.[0]?.shipping;
+        orderPayerEmail = pp.payer?.email_address ?? "";
         const amt = pp.purchase_units?.[0]?.payments?.captures?.[0]?.amount;
         if (amt && amt.currency_code === "USD" && Number(amt.value) !== rec.totals.total) {
           await recordPaid(key, { captureId, amount: amt.value, currency: amt.currency_code, status: "AMOUNT_MISMATCH" });
@@ -119,8 +133,8 @@ export async function POST(request: Request) {
     })) ?? rec;
     await indexCapture(captureId, key).catch(() => {});
 
-    const shipping = resource.shipping as Parameters<typeof fulfillOrder>[1];
-    const payerEmail = rec.paypal.payerEmail ?? "";
+    const shipping = (resource.shipping as Parameters<typeof fulfillOrder>[1]) ?? orderShipping;
+    const payerEmail = rec.paypal.payerEmail || orderPayerEmail;
     await fulfillOrder(rec, shipping, payerEmail);
     return NextResponse.json({ ok: true });
   }

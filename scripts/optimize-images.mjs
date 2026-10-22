@@ -14,8 +14,10 @@
 import sharp from "sharp";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const DIR = new URL("../assets/images/", import.meta.url).pathname;
+// public/assets/images — the old "../assets/images/" pointed at a folder that does not exist.
+const DIR = fileURLToPath(new URL("../public/assets/images/", import.meta.url));
 const files = (await readdir(DIR)).filter((f) => f.endsWith(".jpg"));
 
 for (const f of files) {

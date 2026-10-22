@@ -32,9 +32,10 @@ export default async function ThankYouPage({
         <div style={{ fontSize: 42, marginBottom: 8 }}>&#10003;</div>
         <h1
           style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 900,
-            letterSpacing: -0.5,
+            fontFamily: "var(--font-display)",
+            fontWeight: 400,
+            letterSpacing: "0.04em",
+            textTransform: "uppercase",
             fontSize: "1.8rem",
           }}
         >
@@ -42,33 +43,33 @@ export default async function ThankYouPage({
         </h1>
         {orderId ? (
           <p style={{ color: "#f2f2f0", fontSize: 15, fontWeight: 700, marginTop: 12 }}>
-            Order {orderId} confirmed
+            PayPal reference {orderId.slice(0, 24)}
           </p>
         ) : null}
         <div
           style={{
             border: "1px solid rgba(255,255,255,0.09)",
-            background: "#121215",
+            background: "var(--panel)",
             padding: 16,
             marginTop: 16,
             textAlign: "left",
           }}
         >
-          <p style={{ color: "#8a8a90", fontSize: 13, lineHeight: 1.7, margin: 0 }}>
-            Order details will appear here once your payment is verified against
-            our records.
+          <p style={{ color: "var(--mut)", fontSize: 13, lineHeight: 1.7, margin: 0 }}>
+            Your payment is checked against our records before your order goes to
+            production. If anything needs a second look, we email you.
           </p>
         </div>
-        <p style={{ color: "#8a8a90", fontSize: 14, lineHeight: 1.7, marginTop: 12 }}>
-          A confirmation email is on its way.
+        <p style={{ color: "var(--mut)", fontSize: 14, lineHeight: 1.7, marginTop: 12 }}>
+          PayPal emails your receipt. A tracking email follows once your order ships.
         </p>
         <Link
-          href="/store.html"
+          href="/"
           style={{
             display: "inline-block",
             marginTop: 22,
-            background: "#8a4b3a",
-            color: "#fff",
+            background: "var(--acc)",
+            color: "#06130a",
             padding: "14px 32px",
             letterSpacing: 2,
             fontSize: 12,
