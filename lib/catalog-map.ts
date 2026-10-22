@@ -59,6 +59,78 @@ export const PRINTIFY: Record<string, PrintifyMapping> = {
       { size: "3XL", color: "White", variantId: 103551, cost: 19.45 },
     ],
   },
+  "gt-barcode-tee": {
+    // Barcode Boxy Tee — Printify product 6ac2f2dd648a20ba5a031598 (verified Oct 22, 2026)
+    productId: "6ac2f2dd648a20ba5a031598",
+    blueprintId: 1382,
+    printProviderId: 99,
+    variants: [
+      // Black — Bella+Canvas 3010
+      { size: "XS", color: "Black", variantId: 103517, cost: 18.58 },
+      { size: "S", color: "Black", variantId: 103518, cost: 18.58 },
+      { size: "M", color: "Black", variantId: 103519, cost: 18.58 },
+      { size: "L", color: "Black", variantId: 103520, cost: 18.58 },
+      { size: "XL", color: "Black", variantId: 103521, cost: 18.58 },
+      { size: "2XL", color: "Black", variantId: 103522, cost: 19.45 },
+      { size: "3XL", color: "Black", variantId: 103523, cost: 19.45 },
+      // White — Bella+Canvas 3010
+      { size: "XS", color: "White", variantId: 103545, cost: 18.58 },
+      { size: "S", color: "White", variantId: 103546, cost: 18.58 },
+      { size: "M", color: "White", variantId: 103547, cost: 18.58 },
+      { size: "L", color: "White", variantId: 103548, cost: 18.58 },
+      { size: "XL", color: "White", variantId: 103549, cost: 18.58 },
+      { size: "2XL", color: "White", variantId: 103550, cost: 19.45 },
+      { size: "3XL", color: "White", variantId: 103551, cost: 19.45 },
+    ],
+  },
+  "gt-classic-tee": {
+    // Classic Boxy Tee — Printify product 6ac2f2e2210cd1118005b3c7 (verified Oct 22, 2026)
+    productId: "6ac2f2e2210cd1118005b3c7",
+    blueprintId: 1382,
+    printProviderId: 99,
+    variants: [
+      // Black — Bella+Canvas 3010
+      { size: "XS", color: "Black", variantId: 103517, cost: 18.58 },
+      { size: "S", color: "Black", variantId: 103518, cost: 18.58 },
+      { size: "M", color: "Black", variantId: 103519, cost: 18.58 },
+      { size: "L", color: "Black", variantId: 103520, cost: 18.58 },
+      { size: "XL", color: "Black", variantId: 103521, cost: 18.58 },
+      { size: "2XL", color: "Black", variantId: 103522, cost: 19.45 },
+      { size: "3XL", color: "Black", variantId: 103523, cost: 19.45 },
+      // White — Bella+Canvas 3010
+      { size: "XS", color: "White", variantId: 103545, cost: 18.58 },
+      { size: "S", color: "White", variantId: 103546, cost: 18.58 },
+      { size: "M", color: "White", variantId: 103547, cost: 18.58 },
+      { size: "L", color: "White", variantId: 103548, cost: 18.58 },
+      { size: "XL", color: "White", variantId: 103549, cost: 18.58 },
+      { size: "2XL", color: "White", variantId: 103550, cost: 19.45 },
+      { size: "3XL", color: "White", variantId: 103551, cost: 19.45 },
+    ],
+  },
+  "gt-faceless-tee": {
+    // Faceless Boxy Tee — Printify product 6ac2f2e91eaed3057e02b810 (verified Oct 22, 2026)
+    productId: "6ac2f2e91eaed3057e02b810",
+    blueprintId: 1382,
+    printProviderId: 99,
+    variants: [
+      // Black — Bella+Canvas 3010
+      { size: "XS", color: "Black", variantId: 103517, cost: 18.58 },
+      { size: "S", color: "Black", variantId: 103518, cost: 18.58 },
+      { size: "M", color: "Black", variantId: 103519, cost: 18.58 },
+      { size: "L", color: "Black", variantId: 103520, cost: 18.58 },
+      { size: "XL", color: "Black", variantId: 103521, cost: 18.58 },
+      { size: "2XL", color: "Black", variantId: 103522, cost: 19.45 },
+      { size: "3XL", color: "Black", variantId: 103523, cost: 19.45 },
+      // White — Bella+Canvas 3010
+      { size: "XS", color: "White", variantId: 103545, cost: 18.58 },
+      { size: "S", color: "White", variantId: 103546, cost: 18.58 },
+      { size: "M", color: "White", variantId: 103547, cost: 18.58 },
+      { size: "L", color: "White", variantId: 103548, cost: 18.58 },
+      { size: "XL", color: "White", variantId: 103549, cost: 18.58 },
+      { size: "2XL", color: "White", variantId: 103550, cost: 19.45 },
+      { size: "3XL", color: "White", variantId: 103551, cost: 19.45 },
+    ],
+  },
 };
 
 /**
