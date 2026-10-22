@@ -54,6 +54,7 @@ export async function resolveCart(lines: CartLine[]): Promise<ResolvedCart> {
   }
 
   const resolved: ResolvedLine[] = [];
+  const styleQty = new Map<string, number>(); // units already taken per style (product id)
   for (const line of lines) {
     const base = items.find((p) => p.id === line.id);
     if (!base) continue; // silently drop unknown ids
@@ -86,7 +87,17 @@ export async function resolveCart(lines: CartLine[]): Promise<ResolvedCart> {
       );
     }
 
-    const qty = Math.max(1, Math.min(10, Math.floor(line.qty) || 1)); // terms: cap 10/style
+    // Terms of sale cap orders at 2 units per style per client. Enforce it
+    // here, aggregated across every size/color line of the same product,
+    // not just per line. Extra units are trimmed; a style already at the
+    // cap contributes no further lines.
+    const styleUsed = styleQty.get(base.id) ?? 0;
+    const qty = Math.min(
+      Math.max(1, Math.min(2, Math.floor(line.qty) || 1)),
+      2 - styleUsed
+    );
+    if (qty <= 0) continue;
+    styleQty.set(base.id, styleUsed + qty);
     const basePrice = typeof o.price === "number" ? o.price : base.price.usd;
     const unitPrice = round2(basePrice + sizePriceAdjust(size));
     const fulfillment: PrintifyLine | null = printifyFor(base.id, size, color);

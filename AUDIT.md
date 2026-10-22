@@ -24,10 +24,12 @@ Limits: the sandbox had no network, so `bun install`, `next build` and a live Pa
 - Removed false claims: "Duties are prepaid", "express" shipping, "confirmation email is on its way" (nothing sends one).
 - Removed stale Snipcart `CONFIG.md`.
 
+## Resolved 2026-10-22 (improvement pass after the Claude build went live)
+1. **2-units-per-style cap** — RESOLVED in favour of the terms: `resolveCart` now enforces max 2 units per style per client, aggregated across all size/color lines of a product (extras trimmed), and the storefront cart cap `MAXQ` is 2 to match. The old 10-per-line clamp is gone.
+2. **Privacy policy** — RESOLVED: the newsletter and Plausible analytics mentions are removed (neither exists), along with the cookie-banner/analytics sentence and the email-platform clause in Third Parties. The rest of the policy is unchanged.
+3. **"240 GSM"** — RESOLVED: the unverified claim is removed from `store.html`; the details copy now uses the catalog-verified fabric wording, "100% ring-spun cotton".
+
 ## Needs a decision from you (not changed)
-1. **2-units-per-style cap**: `terms.html` promises it and the README says it is enforced, but `resolveCart` allows up to 10 per line. Pick one.
-2. **Privacy policy** mentions a newsletter and Plausible analytics; the site has neither. Have it reviewed.
-3. **"240 GSM"** is in the copy but not in your catalog data. Verify before launch.
 4. `FREE_SHIP`/`SHIP_FLAT` are duplicated in `store.html` and `lib/pricing.ts`. Keep them in sync.
 5. `estimateMargin` counts the $12 shipping revenue but not shipping cost (informational only).
 6. Rate limiting keys on `x-forwarded-for`; behind a proxy that doesn't set it, all users share one bucket.
